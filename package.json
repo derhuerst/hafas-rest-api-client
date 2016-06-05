@@ -9,5 +9,8 @@
 	"homepage":     "https://github.com/derhuerst/vbb-client",
 	"repository":   "derhuerst/vbb-client",
 	"license":      "ISC",
-	"engines":      {"node": ">=4"}
+	"engines":      {"node": ">=4"},
+	"dependencies": {
+		"got": "^6.3"
+	}
 }

@@ -1,6 +1,6 @@
 # *vbb-client*
 
-**An [API](https://github.com/derhuerst/vbb-rest) client for Berlin & Brandenburg public transport.**
+**An [API](https://github.com/derhuerst/vbb-rest) client for Berlin & Brandenburg public transport.** It's just a thin wrapper around [`got`](https://github.com/sindresorhus/got#usage).
 
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
 [![build status](https://img.shields.io/travis/derhuerst/vbb-client.svg)](https://travis-ci.org/derhuerst/vbb-client)
