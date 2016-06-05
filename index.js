@@ -1,6 +1,7 @@
 'use strict'
 
 const got = require('got')
+const ndjson = require('ndjson').parse
 
 
 
@@ -21,10 +22,11 @@ const request = (route, query, stream) => {
 const stations = (q = {}) => {
 	if (q.completion === true)
 		return request('/stations', q, false)
-	return request('/stations', q, true)
+	return request('/stations', q, true).pipe(ndjson())
 }
 
-const nearby = (q = {}) => request('/stations/nearby', q)
+const nearby = (q = {}) =>
+	request('/stations/nearby', q, true).pipe(ndjson())
 
 
 
@@ -40,7 +42,8 @@ const departures = (id, q = {}) => {
 
 
 
-const lines = (q = {}) => request('/lines', q)
+const lines = (q = {}) =>
+	request('/lines', q, true).pipe(ndjson())
 
 const line = (id) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
@@ -61,7 +64,7 @@ const routes = (from, to, q = {}) => {
 
 const map = (type) => {
 	if ('string' !== typeof type) throw new Error('type must be a string')
-	return request('/maps/' + type, {})
+	return request('/maps/' + type, {}, true)
 }
 
 
