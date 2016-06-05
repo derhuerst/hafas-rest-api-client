@@ -13,5 +13,9 @@
 	"dependencies": {
 		"got": "^6.3",
 		"ndjson": "^1.4.3"
+	},
+	"scripts": {
+		"test":          "./test.js",
+		"prepublish":    "npm test"
 	}
 }
