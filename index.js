@@ -18,43 +18,53 @@ const request = (route, query, stream) => {
 
 
 
-const stations = (query) => {
-	query = query || {}
-	const stream = (query && query.query && query.completion === true)
-	return request('/stations', query, stream)
+const stations = (q = {}) => {
+	if (q.completion === true)
+		return request('/stations', q, false)
+	return request('/stations', q, true)
 }
-const nearby = (query) =>
-	request('/stations/nearby', query || {})
+
+const nearby = (q = {}) => request('/stations/nearby', q)
+
+
 
 const station = (id) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
 	return request('/stations/' + id, {})
 }
-const departures = (id, query) => {
+
+const departures = (id, q = {}) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
-	return request('/stations/' + id, query || {})
+	return request('/stations/' + id, q)
 }
 
-const lines = (query) =>
-	request('/lines', query || {})
+
+
+const lines = (q = {}) => request('/lines', q)
+
 const line = (id) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
 	return request('/lines/' + id, {})
 }
 
-const routes = (from, to, query) => {
+
+
+const routes = (from, to, q = {}) => {
 	if ('number' !== typeof from) throw new Error('from must be a number')
 	if ('number' !== typeof to) throw new Error('to must be a number')
-	query = query || {}
-	query.from = from
-	query.to = to
-	return request('/routes', query)
+	q.from = from
+	q.to = to
+	return request('/routes', q)
 }
+
+
 
 const map = (type) => {
 	if ('string' !== typeof type) throw new Error('type must be a string')
 	return request('/maps/' + type, {})
 }
+
+
 
 module.exports = {
 	stations, nearby,
