@@ -18,7 +18,19 @@ npm install vbb-client
 
 ## Usage
 
-todo
+Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
+
+- `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
+- `nearby([query])` → [`stream.Readable`][stream]
+- `station(id)` → [`Promise`][promise]
+- `departures(id, [query])` → [`Promise`][promise]
+- `lines([query])` → [`stream.Readable`][stream]
+- `line(id)` → [`Promise`][promise]
+- `routes(from, to, [query])` → [`Promise`][promise]
+- `map(type)` → [`stream.Readable`][stream]
+
+[promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 
 
 ## Contributing
