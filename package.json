@@ -1,0 +1,13 @@
+{
+	"name":         "vbb-client",
+	"description":  "An API client for Berlin & Brandenburg public transport.",
+	"version":      "0.1.0",
+	"main":         "index.js",
+	"files":        ["index.js"],
+	"keywords":     ["vbb", "bvg", "public", "transport", "berlin"],
+	"author":       "Jannis R <mail@jannisr.de>",
+	"homepage":     "https://github.com/derhuerst/vbb-client",
+	"repository":   "derhuerst/vbb-client",
+	"license":      "ISC",
+	"engines":      {"node": ">=4"}
+}
