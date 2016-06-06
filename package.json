@@ -18,7 +18,9 @@
 		"tape": "^4.5.1",
 		"tap-min": "^1.1",
 		"is-promise": "^2.1",
-		"is-stream": "^1.1"
+		"is-stream": "^1.1",
+		"is-roughly-equal": "^0.1",
+		"floordate": "^2"
 	},
 	"scripts": {
 		"test":       "tape test.js | tap-min",
