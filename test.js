@@ -33,14 +33,14 @@ const isKottbusserTor = (s) => s
 	&& s.longitude === 13.417748
 
 const isM17 = (l) => l
-	&& l.id === 528
+	&& l.id === 533
 	&& l.name === 'M17'
 	&& l.type === 'tram'
 	&& l.agencyId === 'BVT'
 
 
 
-test.skip('stations() with completion', (t) => {
+test('stations() with completion', (t) => {
 	t.plan(4)
 	const s = client.stations({query: 'mehringd', completion: true})
 	t.ok(isPromise(s))
@@ -48,23 +48,25 @@ test.skip('stations() with completion', (t) => {
 	.then((data) => {
 		t.ok(Array.isArray(data))
 		const s = data.find((s) => s.id === 9017101)
-		t.ok(isMehringdamm(s))
+		t.equal(s.id, 9017101)
+		t.equal(s.name, 'U Mehringdamm')
 	})
 })
 
-test.skip('stations() without completion', (t) => {
-	t.plan(3)
+test('stations() without completion', (t) => {
+	t.plan(4)
 	const s = client.stations({query: 'mehringdamm'})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (s) => {
 		if (s.id !== 9017101) return
-		t.ok(isMehringdamm(s))
+		t.equal(s.id, 9017101)
+		t.equal(s.name, 'U Mehringdamm')
 	})
 	.on('end', () => t.pass('end event'))
 })
 
-test.skip('nearby()', (t) => {
+test('nearby()', (t) => {
 	const latitudeValid = isRoughlyEqual(.3, 52.5137344)
 	const longitudeValid = isRoughlyEqual(.3, 13.4744798)
 	t.plan(3 + 4 * 8)
@@ -93,14 +95,15 @@ test.skip('nearby()', (t) => {
 	})
 })
 
-test.skip('station()', (t) => {
-	t.plan(10)
+test('station()', (t) => {
+	t.plan(4 + 1 * 4)
 
 	t.throws(() => client.station())
 	t.throws(() => client.station('foo'))
 	t.throws(() => client.station({}))
 
 	const s = client.station(9017101)
+	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((s) => {
 		t.ok(isMehringdamm(s))
@@ -111,18 +114,20 @@ test.skip('station()', (t) => {
 })
 
 test.skip('departures()', (t) => {
-	t.plan(5 + 3 * 3)
+	t.plan(6 + 3 * 3)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
 	t.throws(() => client.departures({}))
 
 	const s = client.departures(9017101, {when, results: 3})
+	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((data) => {
 		t.ok(Array.isArray(data))
 		t.equal(data.length, 3)
 		for (let dep of data) {
+			console.log(dep)
 			t.ok(isMehringdamm(dep.station))
 			t.ok(validWhen(dep.when))
 			t.ok(dep.product)
@@ -130,7 +135,7 @@ test.skip('departures()', (t) => {
 	})
 })
 
-test.skip('lines()', (t) => {
+test('lines()', (t) => {
 	t.plan(2 + 1 * 2)
 	const s = client.lines({variants: true, name: 'M17'})
 	t.ok(isStream(s))
@@ -142,14 +147,15 @@ test.skip('lines()', (t) => {
 	.on('end', () => t.pass('end event'))
 })
 
-test.skip('line()', (t) => {
-	t.plan(3 + 1 * 2)
+test('line()', (t) => {
+	t.plan(4 + 1 * 2)
 
 	t.throws(() => client.line())
 	t.throws(() => client.line('foo'))
 	t.throws(() => client.line({}))
 
-	const s = client.line(528)
+	const s = client.line(533)
+	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((l) => {
 		t.ok(isM17(l))
@@ -180,7 +186,7 @@ test.skip('routes()', (t) => {
 	})
 })
 
-test.skip('map()', (t) => {
+test('map()', (t) => {
 	t.plan(5)
 
 	t.throws(() => client.map())
