@@ -12,7 +12,7 @@ const request = (route, query, stream) => {
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
 	const url = endpoint + route
-	if (stream === true) return got.stream(url, {query, json: true})
+	if (stream === true) return got.stream(url, {query})
 	const body = (res) => res.body
 	return got(url, {query, json: true}).then(body, body)
 }
@@ -26,7 +26,7 @@ const stations = (q = {}) => {
 }
 
 const nearby = (q = {}) =>
-	request('/stations/nearby', q, true).pipe(ndjson())
+	request('/stations/nearby', q)
 
 
 
@@ -37,7 +37,7 @@ const station = (id) => {
 
 const departures = (id, q = {}) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
-	return request('/stations/' + id, q)
+	return request(`/stations/${id}/departures`, q)
 }
 
 
@@ -58,6 +58,18 @@ const routes = (from, to, q = {}) => {
 	q.from = from
 	q.to = to
 	return request('/routes', q)
+	.then((routes) => {
+		for (let route of routes) {
+			// route.start = new Date(route.start)
+			route.start = new Date(route.start)
+			route.end = new Date(route.end)
+			for (let part of route.parts) {
+				part.start = new Date(part.start)
+				part.end = new Date(part.end)
+			}
+		}
+		return routes
+	}, (err) => err)
 }
 
 
