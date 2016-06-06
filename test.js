@@ -10,11 +10,27 @@ const client = require('./index')
 
 
 
+const hour = 60 * 60 * 1000
+const when = new Date(floor(new Date()) + 10 * hour)
+const validWhen = isRoughlyEqual(2 * hour, +when)
+
 const isMehringdamm = (s) => s
 	&& s.id === 9017101
 	&& s.name === 'U Mehringdamm'
 	&& s.latitude === 52.493578
 	&& s.longitude === 13.388158
+
+const isHalleschesTor = (s) => s
+	&& s.id === 9012103
+	&& s.name === 'U Hallesches Tor'
+	&& s.latitude === 52.497776
+	&& s.longitude === 13.39176
+
+const isKottbusserTor = (s) => s
+	&& s.id === 9013102
+	&& s.name === 'U Kottbusser Tor'
+	&& s.latitude === 52.499044
+	&& s.longitude === 13.417748
 
 const isM17 = (l) => l
 	&& l.id === 528
@@ -96,9 +112,6 @@ test.skip('station()', (t) => {
 
 test.skip('departures()', (t) => {
 	t.plan(5 + 3 * 3)
-	const hour = 60 * 60 * 1000
-	const when = new Date(floor(new Date()) + 10 * hour)
-	const validWhen = isRoughlyEqual(2 * hour, +when)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
@@ -142,4 +155,41 @@ test.skip('line()', (t) => {
 		t.ok(isM17(l))
 		t.ok(Array.isArray(l.variants))
 	})
+})
+
+test.skip('routes()', (t) => {
+	t.plan(6 + 1 * 6)
+
+	t.throws(() => client.routes())
+	t.throws(() => client.routes('foo'))
+	t.throws(() => client.routes({}))
+	t.throws(() => client.routes(123))
+	t.throws(() => client.routes(123, 'foo'))
+	t.throws(() => client.routes(123, {}))
+
+	const s = client.routes(9012103, 9013102, {when, results: 1})
+	s.catch((err) => t.fail(err.message))
+	.then((r) => {
+		t.ok(Array.isArray(r))
+		t.equal(r.length, 1)
+		r = r[0]
+		t.ok(validWhen(r.start))
+		t.ok(isHalleschesTor(r.from))
+		t.ok(validWhen(r.end))
+		t.ok(isKottbusserTor(r.to))
+	})
+})
+
+test.skip('map()', (t) => {
+	t.plan(5)
+
+	t.throws(() => client.map())
+	t.throws(() => client.map(123))
+	t.throws(() => client.map({}))
+
+	const s = client.map('bvg-night')
+	t.ok(isStream(s))
+	s.on('error', (err) => t.fail(err.message))
+	.on('data', () => {})
+	.on('end', () => t.pass('end event'))
 })
