@@ -19,14 +19,15 @@ const request = (route, query, stream) => {
 
 
 
-const stations = (q = {}) => {
+const stations = (q) => {
+	q = q || {}
 	if (q.completion === true)
 		return request('/stations', q, false)
 	return request('/stations', q, true).pipe(ndjson())
 }
 
-const nearby = (q = {}) =>
-	request('/stations/nearby', q)
+const nearby = (q) =>
+	request('/stations/nearby', q || {})
 
 
 
@@ -35,8 +36,9 @@ const station = (id) => {
 	return request('/stations/' + id, {})
 }
 
-const departures = (id, q = {}) => {
+const departures = (id, q) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
+	q = q || {}
 	if ('when' in q) q.when /= 1000
 	return request(`/stations/${id}/departures`, q)
 	.then((deps) => {
@@ -47,8 +49,8 @@ const departures = (id, q = {}) => {
 
 
 
-const lines = (q = {}) =>
-	request('/lines', q, true).pipe(ndjson())
+const lines = (q) =>
+	request('/lines', q || {}, true).pipe(ndjson())
 
 const line = (id) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
@@ -57,9 +59,10 @@ const line = (id) => {
 
 
 
-const routes = (from, to, q = {}) => {
+const routes = (from, to, q) => {
 	if ('number' !== typeof from) throw new Error('from must be a number')
 	if ('number' !== typeof to) throw new Error('to must be a number')
+	q = q || {}
 	q.from = from
 	q.to = to
 	if ('when' in q) q.when /= 1000

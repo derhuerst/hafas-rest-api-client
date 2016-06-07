@@ -23,7 +23,7 @@
 		"floordate": "^2"
 	},
 	"scripts": {
-		"test":       "tape test.js | tap-min",
+		"test":       "./test.js | tap-min",
 		"prepublish": "npm test"
 	}
 }
