@@ -38,6 +38,10 @@ const station = (id) => {
 const departures = (id, q = {}) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
 	return request(`/stations/${id}/departures`, q)
+	.then((deps) => {
+		for (let dep of deps) dep.when = new Date(dep.when)
+		return deps
+	}, (err) => err)
 }
 
 
@@ -60,7 +64,6 @@ const routes = (from, to, q = {}) => {
 	return request('/routes', q)
 	.then((routes) => {
 		for (let route of routes) {
-			// route.start = new Date(route.start)
 			route.start = new Date(route.start)
 			route.end = new Date(route.end)
 			for (let part of route.parts) {
