@@ -14,23 +14,17 @@ const hour = 60 * 60 * 1000
 const when = new Date(floor(new Date()) + 10 * hour)
 const validWhen = isRoughlyEqual(2 * hour, +when)
 
-const isMehringdamm = (s) => s
-	&& s.id === 9017101
-	&& s.name === 'U Mehringdamm'
-	&& s.latitude === 52.493578
-	&& s.longitude === 13.388158
-
 const isHalleschesTor = (s) => s
 	&& s.id === 9012103
 	&& s.name === 'U Hallesches Tor'
-	&& s.latitude === 52.497776
-	&& s.longitude === 13.39176
+	&& isRoughlyEqual(.00001, s.latitude, 52.497776)
+	&& isRoughlyEqual(.00001, s.longitude, 13.391766)
 
 const isKottbusserTor = (s) => s
 	&& s.id === 9013102
 	&& s.name === 'U Kottbusser Tor'
-	&& s.latitude === 52.499044
-	&& s.longitude === 13.417748
+	&& isRoughlyEqual(.00001, s.latitude, 52.499044)
+	&& isRoughlyEqual(.00001, s.longitude, 13.417748)
 
 const isM17 = (l) => l
 	&& l.id === 533
@@ -42,26 +36,26 @@ const isM17 = (l) => l
 
 test('stations() with completion', (t) => {
 	t.plan(4)
-	const s = client.stations({query: 'mehringd', completion: true})
+	const s = client.stations({query: 'hallesc', completion: true})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((data) => {
 		t.ok(Array.isArray(data))
-		const s = data.find((s) => s.id === 9017101)
-		t.equal(s.id, 9017101)
-		t.equal(s.name, 'U Mehringdamm')
+		const s = data.find((s) => s.id === 9012103)
+		t.equal(s.id, 9012103)
+		t.equal(s.name, 'U Hallesches Tor')
 	})
 })
 
 test('stations() without completion', (t) => {
 	t.plan(4)
-	const s = client.stations({query: 'mehringdamm'})
+	const s = client.stations({query: 'hallesches tor'})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (s) => {
-		if (s.id !== 9017101) return
-		t.equal(s.id, 9017101)
-		t.equal(s.name, 'U Mehringdamm')
+		if (s.id !== 9012103) return
+		t.equal(s.id, 9012103)
+		t.equal(s.name, 'U Hallesches Tor')
 	})
 	.on('end', () => t.pass('end event'))
 })
@@ -102,33 +96,31 @@ test('station()', (t) => {
 	t.throws(() => client.station('foo'))
 	t.throws(() => client.station({}))
 
-	const s = client.station(9017101)
+	const s = client.station(9012103)
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((s) => {
-		t.ok(isMehringdamm(s))
+		t.ok(isHalleschesTor(s))
 		t.equal(typeof s.weight, 'number')
 		t.ok(s.weight > 0)
 		t.ok(Array.isArray(s.lines))
 	})
 })
 
-test.skip('departures()', (t) => {
-	t.plan(6 + 3 * 3)
+test('departures()', (t) => {
+	t.plan(5 + 7 * 3)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
 	t.throws(() => client.departures({}))
 
-	const s = client.departures(9017101, {when, results: 3})
+	const s = client.departures(9012103, {when, duration: 3})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((data) => {
 		t.ok(Array.isArray(data))
-		t.equal(data.length, 3)
 		for (let dep of data) {
-			console.log(dep)
-			t.ok(isMehringdamm(dep.station))
+			t.ok(isHalleschesTor(dep.station))
 			t.ok(validWhen(dep.when))
 			t.ok(dep.product)
 		}
@@ -163,7 +155,7 @@ test('line()', (t) => {
 	})
 })
 
-test.skip('routes()', (t) => {
+test('routes()', (t) => {
 	t.plan(6 + 1 * 6)
 
 	t.throws(() => client.routes())
