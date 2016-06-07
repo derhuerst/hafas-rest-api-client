@@ -39,7 +39,7 @@ const station = (id) => {
 const departures = (id, q) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
 	q = q || {}
-	if ('when' in q) q.when /= 1000
+	if ('when' in q) q.when = Math.round(q.when / 1000)
 	return request(`/stations/${id}/departures`, q)
 	.then((deps) => {
 		for (let dep of deps) dep.when = new Date(dep.when * 1000)
@@ -65,7 +65,7 @@ const routes = (from, to, q) => {
 	q = q || {}
 	q.from = from
 	q.to = to
-	if ('when' in q) q.when /= 1000
+	if ('when' in q) Math.round(q.when / 1000)
 	return request('/routes', q)
 	.then((routes) => {
 		for (let route of routes) {
