@@ -11,7 +11,7 @@ const client = require('./index')
 
 
 const hour = 60 * 60 * 1000
-const when = new Date(floor(new Date()) + 10 * hour)
+const when = new Date(+floor(new Date(), 'day') + 10 * hour)
 const validWhen = isRoughlyEqual(2 * hour, +when)
 
 const isHalleschesTor = (s) => s
@@ -108,7 +108,7 @@ test('station()', (t) => {
 })
 
 test('departures()', (t) => {
-	t.plan(5 + 7 * 3)
+	t.plan(5 + 4 * 3)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
