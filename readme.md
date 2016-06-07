@@ -1,6 +1,6 @@
 # *vbb-client*
 
-**An [API](https://github.com/derhuerst/vbb-rest) client for Berlin & Brandenburg public transport.** It's just a thin wrapper around [`got`](https://github.com/sindresorhus/got#usage).
+**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest).** It's just a thin wrapper around [`got`](https://github.com/sindresorhus/got#usage).
 
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
 [![build status](https://img.shields.io/travis/derhuerst/vbb-client.svg)](https://travis-ci.org/derhuerst/vbb-client)
@@ -21,7 +21,7 @@ npm install vbb-client
 Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
 
 - `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
-- `nearby([query])` → [`stream.Readable`][stream]
+- `nearby([query])` → [`Promise`][promise]
 - `station(id)` → [`Promise`][promise]
 - `departures(id, [query])` → [`Promise`][promise]
 - `lines([query])` → [`stream.Readable`][stream]
