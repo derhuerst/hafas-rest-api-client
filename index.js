@@ -65,7 +65,7 @@ const routes = (from, to, q) => {
 	q = q || {}
 	q.from = from
 	q.to = to
-	if ('when' in q) Math.round(q.when / 1000)
+	if ('when' in q) q.when = Math.round(q.when / 1000)
 	return request('/routes', q)
 	.then((routes) => {
 		for (let route of routes) {
