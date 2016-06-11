@@ -108,22 +108,22 @@ test('station()', (t) => {
 })
 
 test('departures()', (t) => {
-	t.plan(5 + 2 * 3)
+	t.plan(6 + 3)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
 	t.throws(() => client.departures({}))
 
-	const s = client.departures(9012103, {when, duration: 3})
+	const s = client.departures(9012103, {when, duration: 5})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
-	.then((data) => {
-		t.ok(Array.isArray(data))
-		for (let dep of data) {
-			t.ok(isHalleschesTor(dep.station))
-			t.ok(validWhen(dep.when))
-			t.ok(dep.product)
-		}
+	.then((deps) => {
+		t.ok(Array.isArray(deps))
+		t.ok(deps.length >= 1)
+		const dep = deps[0]
+		t.ok(isHalleschesTor(dep.station))
+		t.ok(validWhen(dep.when))
+		t.ok(dep.product)
 	})
 })
 
