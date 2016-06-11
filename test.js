@@ -17,14 +17,14 @@ const validWhen = isRoughlyEqual(2 * hour, +when)
 const isHalleschesTor = (s) => s
 	&& s.id === 9012103
 	&& s.name === 'U Hallesches Tor'
-	&& isRoughlyEqual(.00001, s.latitude, 52.497776)
-	&& isRoughlyEqual(.00001, s.longitude, 13.391766)
+	&& isRoughlyEqual(.0001, s.latitude, 52.497776)
+	&& isRoughlyEqual(.0001, s.longitude, 13.391766)
 
 const isKottbusserTor = (s) => s
 	&& s.id === 9013102
 	&& s.name === 'U Kottbusser Tor'
-	&& isRoughlyEqual(.00001, s.latitude, 52.499044)
-	&& isRoughlyEqual(.00001, s.longitude, 13.417748)
+	&& isRoughlyEqual(.0001, s.latitude, 52.499044)
+	&& isRoughlyEqual(.0001, s.longitude, 13.417748)
 
 const isM17 = (l) => l
 	&& l.id === 533
@@ -108,7 +108,7 @@ test('station()', (t) => {
 })
 
 test('departures()', (t) => {
-	t.plan(5 + 4 * 3)
+	t.plan(5 + 2 * 3)
 
 	t.throws(() => client.departures())
 	t.throws(() => client.departures('foo'))
