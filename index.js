@@ -58,13 +58,25 @@ const line = (id) => {
 }
 
 
+const location = (l, t) => {
+	const q = {}
+	if ('number' === typeof l) {
+		q[t] = l
+		return q
+	}
+	if (l.type === 'poi' || l.type === 'address') {
+		q[t + '.name'] = l.name
+		q[t + '.longitude'] = l.longitude
+		q[t + '.latitude'] = l.latitude
+		if (l.type === 'poi') q[t + '.id'] = l.id
+		return q
+	}
+	throw new Error('valid station, address or poi required.')
+}
 
 const routes = (from, to, q) => {
-	if ('number' !== typeof from) throw new Error('from must be a number')
-	if ('number' !== typeof to) throw new Error('to must be a number')
 	q = q || {}
-	q.from = from
-	q.to = to
+	Object.assign(q, location(from, 'from'), location(to, 'to'))
 	if ('when' in q) q.when = Math.round(q.when / 1000)
 	return request('/routes', q)
 	.then((routes) => {

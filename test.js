@@ -155,7 +155,7 @@ test('line()', (t) => {
 	})
 })
 
-test('routes()', (t) => {
+test('routes() with station IDs', (t) => {
 	t.plan(6 + 1 * 6)
 
 	t.throws(() => client.routes())
@@ -175,6 +175,47 @@ test('routes()', (t) => {
 		t.ok(isHalleschesTor(r.from))
 		t.ok(validWhen(r.end))
 		t.ok(isKottbusserTor(r.to))
+	})
+})
+
+test('routes() with an address', (t) => {
+	t.plan(7)
+
+	const s = client.routes(9042101, {
+		type: 'address', name: 'Torfstraße 17',
+		latitude: 52.5416823, longitude: 13.3491223
+	}, {when, results: 1})
+	s.catch((err) => t.fail(err.message))
+	.then((r) => {
+		t.ok(Array.isArray(r))
+		t.equal(r.length, 1)
+		const last = r[0].parts[r[0].parts.length - 1]
+		t.ok(validWhen(last.end))
+		t.equal(last.to.type, 'address')
+		t.equal(last.to.name, 'Torfstr. 17')
+		t.ok(isRoughlyEqual(.0001, last.to.latitude, 52.541679))
+		t.ok(isRoughlyEqual(.0001, last.to.longitude, 13.349116))
+	})
+})
+
+test('routes() with a poi', (t) => {
+	t.plan(8)
+
+	const s = client.routes(9042101, {
+		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
+		latitude: 52.543333, longitude: 13.351686
+	}, {when, results: 1})
+	s.catch((err) => t.fail(err.message))
+	.then((r) => {
+		t.ok(Array.isArray(r))
+		t.equal(r.length, 1)
+		const last = r[0].parts[r[0].parts.length - 1]
+		t.ok(validWhen(last.end))
+		t.equal(last.to.type, 'poi')
+		t.equal(last.to.name, 'ATZE Musiktheater')
+		t.equal(last.to.id, 9980720)
+		t.ok(isRoughlyEqual(.0001, last.to.latitude, 52.543333))
+		t.ok(isRoughlyEqual(.0001, last.to.longitude, 13.351686))
 	})
 })
 
