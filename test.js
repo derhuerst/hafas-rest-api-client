@@ -219,6 +219,40 @@ test('routes() with a poi', (t) => {
 	})
 })
 
+test('locations()', (t) => {
+	t.plan(6 + 10 * 3 + 6)
+
+	t.throws(() => client.locations())
+	t.throws(() => client.locations({}))
+	t.throws(() => client.locations(123))
+
+	const s = client.locations('Alexanderplatz', {results: 10})
+	t.ok(isPromise(s))
+	s.catch((err) => t.fail(err.message))
+	.then((locations) => {
+		t.ok(Array.isArray(locations))
+		t.equal(locations.length, 10)
+
+		for (let l of locations) {
+			t.equal(typeof l.name, 'string')
+			t.equal(typeof l.latitude, 'number')
+			t.equal(typeof l.longitude, 'number')
+		}
+
+		const s = locations.find((l) => l.type === 'station')
+		t.ok(s)
+		t.equal(typeof s.id, 'number')
+		t.equal(typeof s.products, 'object')
+
+		const p = locations.find((l) => l.type === 'poi')
+		t.ok(p)
+		t.equal(typeof p.id, 'number')
+
+		const a = locations.find((l) => l.type === 'address')
+		t.ok(a)
+	})
+})
+
 test('map()', (t) => {
 	t.plan(5)
 
