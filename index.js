@@ -12,9 +12,10 @@ const request = (route, query, stream) => {
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
 	const url = endpoint + route
-	if (stream === true) return got.stream(url, {query})
+	const headers = query.identifier ? {'X-Identifier': query.identifier} : {}
+	if (stream === true) return got.stream(url, {query, headers})
 	const body = (res) => res.body
-	return got(url, {query, json: true}).then(body, body)
+	return got(url, {query, headers, json: true}).then(body, body)
 }
 
 
@@ -31,9 +32,9 @@ const nearby = (q) =>
 
 
 
-const station = (id) => {
+const station = (id, q) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
-	return request('/stations/' + id, {})
+	return request('/stations/' + id, q || {})
 }
 
 const departures = (id, q) => {
@@ -52,14 +53,14 @@ const departures = (id, q) => {
 const lines = (q) =>
 	request('/lines', q || {}, true).pipe(ndjson())
 
-const line = (id) => {
+const line = (id, q) => {
 	if ('number' !== typeof id) throw new Error('id must be a number')
-	return request('/lines/' + id, {})
+	return request('/lines/' + id, q || {})
 }
 
 
-const location = (l, t) => {
-	const q = {}
+const location = (l, t, q) => {
+	q = q || {}
 	if ('number' === typeof l) {
 		q[t] = l
 		return q
@@ -103,9 +104,9 @@ const locations = (query, q) => {
 
 
 
-const map = (type) => {
+const map = (type, q) => {
 	if ('string' !== typeof type) throw new Error('type must be a string')
-	return request('/maps/' + type, {}, true)
+	return request('/maps/' + type, q || {}, true)
 }
 
 

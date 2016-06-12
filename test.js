@@ -36,7 +36,10 @@ const isM17 = (l) => l
 
 test('stations() with completion', (t) => {
 	t.plan(4)
-	const s = client.stations({query: 'hallesc', completion: true})
+	const s = client.stations({
+		query: 'hallesc', completion: true,
+		identifier: 'vbb-client-test'
+	})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((data) => {
@@ -49,7 +52,10 @@ test('stations() with completion', (t) => {
 
 test('stations() without completion', (t) => {
 	t.plan(4)
-	const s = client.stations({query: 'hallesches tor'})
+	const s = client.stations({
+		query: 'hallesches tor',
+		identifier: 'vbb-client-test'
+	})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (s) => {
@@ -69,7 +75,8 @@ test('nearby()', (t) => {
 		latitude: 52.5137344,
 		longitude: 13.4744798,
 		results: 4,
-		distance: 1000
+		distance: 1000,
+		identifier: 'vbb-client-test'
 	})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
@@ -96,7 +103,7 @@ test('station()', (t) => {
 	t.throws(() => client.station('foo'))
 	t.throws(() => client.station({}))
 
-	const s = client.station(9012103)
+	const s = client.station(9012103, {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((s) => {
@@ -114,7 +121,10 @@ test('departures()', (t) => {
 	t.throws(() => client.departures('foo'))
 	t.throws(() => client.departures({}))
 
-	const s = client.departures(9012103, {when, duration: 5})
+	const s = client.departures(9012103, {
+		when, duration: 5,
+		identifier: 'vbb-client-test'
+	})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((deps) => {
@@ -129,7 +139,10 @@ test('departures()', (t) => {
 
 test('lines()', (t) => {
 	t.plan(2 + 1 * 2)
-	const s = client.lines({variants: true, name: 'M17'})
+	const s = client.lines({
+		variants: true, name: 'M17',
+		identifier: 'vbb-client-test'
+	})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (l) => {
@@ -146,7 +159,7 @@ test('line()', (t) => {
 	t.throws(() => client.line('foo'))
 	t.throws(() => client.line({}))
 
-	const s = client.line(533)
+	const s = client.line(533, {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((l) => {
@@ -165,7 +178,10 @@ test('routes() with station IDs', (t) => {
 	t.throws(() => client.routes(123, 'foo'))
 	t.throws(() => client.routes(123, {}))
 
-	const s = client.routes(9012103, 9013102, {when, results: 1})
+	const s = client.routes(9012103, 9013102, {
+		when, results: 1,
+		identifier: 'vbb-client-test'
+	})
 	s.catch((err) => t.fail(err.message))
 	.then((r) => {
 		t.ok(Array.isArray(r))
@@ -184,7 +200,10 @@ test('routes() with an address', (t) => {
 	const s = client.routes(9042101, {
 		type: 'address', name: 'Torfstraße 17',
 		latitude: 52.5416823, longitude: 13.3491223
-	}, {when, results: 1})
+	}, {
+		when, results: 1,
+		identifier: 'vbb-client-test'
+	})
 	s.catch((err) => t.fail(err.message))
 	.then((r) => {
 		t.ok(Array.isArray(r))
@@ -204,7 +223,10 @@ test('routes() with a poi', (t) => {
 	const s = client.routes(9042101, {
 		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
 		latitude: 52.543333, longitude: 13.351686
-	}, {when, results: 1})
+	}, {
+		when, results: 1,
+		identifier: 'vbb-client-test'
+	})
 	s.catch((err) => t.fail(err.message))
 	.then((r) => {
 		t.ok(Array.isArray(r))
@@ -226,7 +248,10 @@ test('locations()', (t) => {
 	t.throws(() => client.locations({}))
 	t.throws(() => client.locations(123))
 
-	const s = client.locations('Alexanderplatz', {results: 10})
+	const s = client.locations('Alexanderplatz', {
+		results: 10,
+		identifier: 'vbb-client-test'
+	})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((locations) => {
@@ -260,7 +285,7 @@ test('map()', (t) => {
 	t.throws(() => client.map(123))
 	t.throws(() => client.map({}))
 
-	const s = client.map('bvg-night')
+	const s = client.map('bvg-night', {identifier: 'vbb-client-test'})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', () => {})
