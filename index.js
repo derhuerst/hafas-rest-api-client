@@ -94,6 +94,15 @@ const routes = (from, to, q) => {
 
 
 
+const locations = (query, q) => {
+	if ('string' !== typeof query) throw new Error('query must be a string')
+	q = q || {}
+	q.query = query
+	return request('/locations', q)
+}
+
+
+
 const map = (type) => {
 	if ('string' !== typeof type) throw new Error('type must be a string')
 	return request('/maps/' + type, {}, true)
@@ -106,5 +115,6 @@ module.exports = {
 	station, departures,
 	lines, line,
 	routes,
+	locations,
 	map
 }
