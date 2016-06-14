@@ -5,7 +5,7 @@ const ndjson = require('ndjson').parse
 
 
 
-const endpoint = 'https://vbb-rest.do.jannisr.de'
+const endpoint = 'https://transport.rest'
 
 const request = (route, query, stream) => {
 	if ('string' !== typeof route) throw new Error('route must be a string')
