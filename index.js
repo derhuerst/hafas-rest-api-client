@@ -12,7 +12,8 @@ const request = (route, query, stream) => {
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
 	const url = endpoint + route
-	const headers = query.identifier ? {'X-Identifier': query.identifier} : {}
+	const headers = {'user-agent': 'vbb-client'}
+	if ('identifier' in query) headers['x-identifier'] = query.identifier
 	if (stream === true) return got.stream(url, {query, headers})
 	const body = (res) => res.body
 	return got(url, {query, headers, json: true}).then(body, body)

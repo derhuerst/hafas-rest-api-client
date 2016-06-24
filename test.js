@@ -27,7 +27,7 @@ const isKottbusserTor = (s) => s
 	&& isRoughlyEqual(.0001, s.longitude, 13.417748)
 
 const isM17 = (l) => l
-	&& l.id === 533
+	&& l.id === 536
 	&& l.name === 'M17'
 	&& l.type === 'tram'
 	&& l.agencyId === 'BVT'
@@ -159,7 +159,7 @@ test('line()', (t) => {
 	t.throws(() => client.line('foo'))
 	t.throws(() => client.line({}))
 
-	const s = client.line(533, {identifier: 'vbb-client-test'})
+	const s = client.line(536, {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((l) => {
