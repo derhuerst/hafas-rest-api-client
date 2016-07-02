@@ -33,9 +33,12 @@ const request = (route, query, stream) => {
 	if ('string' !== typeof route) throw new Error('route must be a string')
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
-	const url = endpoint + route + '?' + qs.stringify(query)
 	const headers = {'User-Agent': 'vbb-client'}
-	if ('identifier' in query) headers['X-Identifier'] = query.identifier
+	if ('identifier' in query) {
+		headers['X-Identifier'] = query.identifier
+		delete query.identifier
+	}
+	const url = endpoint + route + '?' + qs.stringify(query)
 
 	const req = fetch(url, {mode: 'cors', redirect: 'follow', headers})
 	.then(
