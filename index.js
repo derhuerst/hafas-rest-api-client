@@ -1,7 +1,29 @@
 'use strict'
 
-const got = require('got')
+const PassThrough = require('stream').PassThrough
+const qs = require('querystring')
+const fetch = require('isomorphic-fetch')
 const ndjson = require('ndjson').parse
+
+
+
+const err = (res) => {
+	const e = new Error(res.statusText)
+	e.statusCode = res.status
+	return e
+}
+
+const streaming = (req) => {
+	const out = new PassThrough()
+	req.then(
+		  (res) => res.body.pipe(out)
+		, (e) => out.emit('error', e))
+	return out
+}
+
+const promised = (req) => req.then(
+	  (res) => res.json()
+	, (e) => {throw e})
 
 
 
@@ -11,12 +33,20 @@ const request = (route, query, stream) => {
 	if ('string' !== typeof route) throw new Error('route must be a string')
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
-	const url = endpoint + route
-	const headers = {'user-agent': 'vbb-client'}
-	if ('identifier' in query) headers['x-identifier'] = query.identifier
-	if (stream === true) return got.stream(url, {query, headers})
-	const body = (res) => res.body
-	return got(url, {query, headers, json: true}).then(body, body)
+	const url = endpoint + route + '?' + qs.stringify(query)
+	const headers = {'User-Agent': 'vbb-client'}
+	if ('identifier' in query) headers['X-Identifier'] = query.identifier
+
+	const req = fetch(url, {mode: 'cors', redirect: 'follow', headers})
+	.then(
+		(res) => {
+			if (!res.ok) throw err(res)
+			return res
+		},
+		(res) => {throw err(res)})
+
+	if (stream === true) return streaming(req)
+	else return promised(req)
 }
 
 

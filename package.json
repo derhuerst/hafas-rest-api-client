@@ -11,7 +11,7 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=6"},
 	"dependencies": {
-		"got": "^6.3",
+		"isomorphic-fetch": "^2.2.1",
 		"ndjson": "^1.4.3"
 	},
 	"devDependencies": {
