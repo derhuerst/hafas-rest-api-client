@@ -96,10 +96,8 @@ const line = (id, q) => {
 
 const location = (l, t, q) => {
 	q = q || {}
-	if ('number' === typeof l) {
-		q[t] = l
-		return q
-	}
+	if ('number' === typeof l) {q[t] = l; return q}
+	if (l.type === 'station') {q[t] = l.id; return q}
 	if (l.type === 'poi' || l.type === 'address') {
 		q[t + '.name'] = l.name
 		q[t + '.longitude'] = l.longitude
