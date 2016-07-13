@@ -1,6 +1,8 @@
 # *vbb-client*
 
-**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest).** It's just a thin wrapper around [`got`](https://github.com/sindresorhus/got#usage).
+**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md).
+
+*vbb-client* works both in the Browser (using [Browserify](http://browserify.org/)) and in Node.js.
 
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
 [![build status](https://img.shields.io/travis/derhuerst/vbb-client.svg)](https://travis-ci.org/derhuerst/vbb-client)
