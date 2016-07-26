@@ -8,6 +8,7 @@ const ndjson = require('ndjson').parse
 
 
 const err = (res) => {
+	if (res instanceof Error) return res
 	const e = new Error(res.statusText)
 	e.statusCode = res.status
 	return e
