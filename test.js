@@ -291,3 +291,14 @@ test('map()', (t) => {
 	.on('data', () => {})
 	.on('end', () => t.pass('end event'))
 })
+
+
+
+test.only('radar()', (t) => {
+	t.plan(2)
+
+	const s = client.radar(52.52411, 13.41002, 52.51942, 13.41709)
+	t.ok(isPromise(s))
+	s.catch((err) => t.fail(err.message))
+	s.then((movements) => t.ok(Array.isArray(movements)))
+})
