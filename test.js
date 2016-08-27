@@ -26,9 +26,9 @@ const isKottbusserTor = (s) => s
 	&& isRoughlyEqual(.0001, s.latitude, 52.499044)
 	&& isRoughlyEqual(.0001, s.longitude, 13.417748)
 
-const isM17 = (l) => l
-	&& l.id === 539
-	&& l.name === 'M17'
+const isM13 = (l) => l
+	&& l.id === 533
+	&& l.name === 'M13'
 	&& l.type === 'tram'
 	&& l.agencyId === 'BVT'
 
@@ -140,13 +140,13 @@ test('departures()', (t) => {
 test('lines()', (t) => {
 	t.plan(2 + 1 * 2)
 	const s = client.lines({
-		variants: true, name: 'M17',
+		variants: true, name: 'M13',
 		identifier: 'vbb-client-test'
 	})
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (l) => {
-		t.ok(isM17(l))
+		t.ok(isM13(l))
 		t.ok(Array.isArray(l.variants))
 	})
 	.on('end', () => t.pass('end event'))
@@ -159,11 +159,11 @@ test('line()', (t) => {
 	t.throws(() => client.line('foo'))
 	t.throws(() => client.line({}))
 
-	const s = client.line(539, {identifier: 'vbb-client-test'})
+	const s = client.line(533, {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((l) => {
-		t.ok(isM17(l))
+		t.ok(isM13(l))
 		t.ok(Array.isArray(l.variants))
 	})
 })
@@ -294,7 +294,7 @@ test('map()', (t) => {
 
 
 
-test.only('radar()', (t) => {
+test('radar()', (t) => {
 	t.plan(2)
 
 	const s = client.radar(52.52411, 13.41002, 52.51942, 13.41709)
