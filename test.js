@@ -15,22 +15,22 @@ const when = new Date(+floor(new Date(), 'day') + 10 * hour)
 const validWhen = isRoughlyEqual(2 * hour, +when)
 
 const isHalleschesTor = (s) => s
-	&& s.id === 9012103
+	&& s.id === '900000012103'
 	&& s.name === 'U Hallesches Tor'
 	&& isRoughlyEqual(.0001, s.latitude, 52.497776)
 	&& isRoughlyEqual(.0001, s.longitude, 13.391766)
 
 const isKottbusserTor = (s) => s
-	&& s.id === 9013102
+	&& s.id === '900000013102'
 	&& s.name === 'U Kottbusser Tor'
 	&& isRoughlyEqual(.0001, s.latitude, 52.499044)
 	&& isRoughlyEqual(.0001, s.longitude, 13.417748)
 
 const isM13 = (l) => l
-	&& l.id === 533
+	&& l.id === '17442_900'
 	&& l.name === 'M13'
 	&& l.type === 'tram'
-	&& l.agencyId === 'BVT'
+	&& l.agencyId === '796'
 
 
 
@@ -44,8 +44,8 @@ test('stations() with completion', (t) => {
 	s.catch((err) => t.fail(err.message))
 	.then((data) => {
 		t.ok(Array.isArray(data))
-		const s = data.find((s) => s.id === 9012103)
-		t.equal(s.id, 9012103)
+		const s = data.find((s) => s.id === '900000012103')
+		t.equal(s.id, '900000012103')
 		t.equal(s.name, 'U Hallesches Tor')
 	})
 })
@@ -59,8 +59,8 @@ test('stations() without completion', (t) => {
 	t.ok(isStream(s))
 	s.on('error', (err) => t.fail(err.message))
 	.on('data', (s) => {
-		if (s.id !== 9012103) return
-		t.equal(s.id, 9012103)
+		if (s.id !== '900000012103') return
+		t.equal(s.id, '900000012103')
 		t.equal(s.name, 'U Hallesches Tor')
 	})
 	.on('end', () => t.pass('end event'))
@@ -86,7 +86,7 @@ test('nearby()', (t) => {
 		for (let l of data) {
 			t.ok(l)
 			t.equal(l.type, 'station')
-			t.equal(typeof l.id, 'number')
+			t.equal(typeof l.id, 'string')
 			t.equal(typeof l.latitude, 'number')
 			t.ok(latitudeValid(l.latitude))
 			t.equal(typeof l.longitude, 'number')
@@ -100,10 +100,10 @@ test('station()', (t) => {
 	t.plan(4 + 1 * 4)
 
 	t.throws(() => client.station())
-	t.throws(() => client.station('foo'))
+	t.throws(() => client.station(null))
 	t.throws(() => client.station({}))
 
-	const s = client.station(9012103, {identifier: 'vbb-client-test'})
+	const s = client.station('900000012103', {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((s) => {
@@ -118,10 +118,10 @@ test('departures()', (t) => {
 	t.plan(6 + 3)
 
 	t.throws(() => client.departures())
-	t.throws(() => client.departures('foo'))
+	t.throws(() => client.departures(null))
 	t.throws(() => client.departures({}))
 
-	const s = client.departures(9012103, {
+	const s = client.departures('900000012103', {
 		when, duration: 5,
 		identifier: 'vbb-client-test'
 	})
@@ -156,10 +156,10 @@ test('line()', (t) => {
 	t.plan(4 + 1 * 2)
 
 	t.throws(() => client.line())
-	t.throws(() => client.line('foo'))
+	t.throws(() => client.line(null))
 	t.throws(() => client.line({}))
 
-	const s = client.line(533, {identifier: 'vbb-client-test'})
+	const s = client.line('17442_900', {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
 	s.catch((err) => t.fail(err.message))
 	.then((l) => {
@@ -172,13 +172,13 @@ test('routes() with station IDs', (t) => {
 	t.plan(6 + 1 * 6)
 
 	t.throws(() => client.routes())
-	t.throws(() => client.routes('foo'))
+	t.throws(() => client.routes(null))
 	t.throws(() => client.routes({}))
 	t.throws(() => client.routes(123))
-	t.throws(() => client.routes(123, 'foo'))
+	t.throws(() => client.routes(123, null))
 	t.throws(() => client.routes(123, {}))
 
-	const s = client.routes(9012103, 9013102, {
+	const s = client.routes('900000012103', '900000013102', {
 		when, results: 1,
 		identifier: 'vbb-client-test'
 	})
@@ -197,7 +197,7 @@ test('routes() with station IDs', (t) => {
 test('routes() with an address', (t) => {
 	t.plan(7)
 
-	const s = client.routes(9042101, {
+	const s = client.routes('900000042101', {
 		type: 'address', name: 'Torfstraße 17',
 		latitude: 52.5416823, longitude: 13.3491223
 	}, {
@@ -220,7 +220,7 @@ test('routes() with an address', (t) => {
 test('routes() with a poi', (t) => {
 	t.plan(8)
 
-	const s = client.routes(9042101, {
+	const s = client.routes('900000042101', {
 		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
 		latitude: 52.543333, longitude: 13.351686
 	}, {
@@ -266,7 +266,7 @@ test('locations()', (t) => {
 
 		const s = locations.find((l) => l.type === 'station')
 		t.ok(s)
-		t.equal(typeof s.id, 'number')
+		t.equal(typeof s.id, 'string')
 		t.equal(typeof s.products, 'object')
 
 		const p = locations.find((l) => l.type === 'poi')

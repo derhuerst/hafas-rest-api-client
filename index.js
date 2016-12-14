@@ -68,12 +68,14 @@ const nearby = (q) =>
 
 
 const station = (id, q) => {
-	if ('number' !== typeof id) throw new Error('id must be a number')
+	if ('number' !== typeof id && 'string' !== typeof id)
+		throw new Error('id must be a number or a string')
 	return request('/stations/' + id, q || {})
 }
 
 const departures = (id, q) => {
-	if ('number' !== typeof id) throw new Error('id must be a number')
+	if ('number' !== typeof id && 'string' !== typeof id)
+		throw new Error('id must be a number or a string')
 	q = q || {}
 	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date))
 		q.when = Math.round(q.when / 1000)
@@ -90,14 +92,15 @@ const lines = (q) =>
 	request('/lines', q || {}, true).pipe(ndjson())
 
 const line = (id, q) => {
-	if ('number' !== typeof id) throw new Error('id must be a number')
+	if ('number' !== typeof id && 'string' !== typeof id)
+		throw new Error('id must be a number or a string')
 	return request('/lines/' + id, q || {})
 }
 
 
 const location = (l, t, q) => {
 	q = q || {}
-	if ('number' === typeof l) {q[t] = l; return q}
+	if ('number' === typeof l || 'string' === typeof l) {q[t] = l; return q}
 	if (l.type === 'station') {q[t] = l.id; return q}
 	if (l.type === 'poi' || l.type === 'address') {
 		q[t + '.name'] = l.name
