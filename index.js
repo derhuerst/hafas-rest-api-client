@@ -75,7 +75,7 @@ const departures = (id, q) => {
 		q.when = Math.round(q.when / 1000)
 	return request(`/stations/${id}/departures`, q)
 	.then((deps) => {
-		for (let dep of deps) dep.when = new Date(dep.when * 1000)
+		for (let dep of deps) dep.when = new Date(dep.when)
 		return deps
 	})
 }
@@ -113,12 +113,12 @@ const journeys = (from, to, q) => {
 		q.when = Math.round(q.when / 1000)
 	return request('/journeys', q)
 	.then((journeys) => {
-		for (let journey of journeys) {
-			journey.start = new Date(journey.start * 1000)
-			journey.end = new Date(journey.end * 1000)
-			for (let part of journey.parts) {
-				part.start = new Date(part.start * 1000)
-				part.end = new Date(part.end * 1000)
+		for (let j of journeys) {
+			if (j.departure) j.departure = new Date(j.departure)
+			if (j.arrival) j.arrival = new Date(j.arrival)
+			for (let part of j.parts) {
+				if (part.departure) part.departure = new Date(part.departure)
+				if (part.arrival) part.arrival = new Date(part.arrival)
 			}
 		}
 		return journeys
