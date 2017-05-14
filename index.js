@@ -7,7 +7,7 @@ const ndjson = require('ndjson').parse
 
 
 
-const endpoint = 'https://transport.rest'
+const endpoint = 'https://vbb.transport.rest'
 
 const request = (route, query, stream) => {
 	if ('string' !== typeof route) throw new Error('route must be a string')
@@ -51,9 +51,7 @@ const request = (route, query, stream) => {
 
 const stations = (q) => {
 	q = q || {}
-	if (q.completion === true)
-		return request('/stations', q, false)
-	return request('/stations', q, true).pipe(ndjson())
+	return request('/stations', q, false)
 }
 
 const nearby = (q) =>
