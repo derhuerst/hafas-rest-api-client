@@ -106,22 +106,22 @@ const location = (l, t, q) => {
 	throw new Error('valid station, address or poi required.')
 }
 
-const routes = (from, to, q) => {
+const journeys = (from, to, q) => {
 	q = q || {}
 	Object.assign(q, location(from, 'from'), location(to, 'to'))
 	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date))
 		q.when = Math.round(q.when / 1000)
-	return request('/routes', q)
-	.then((routes) => {
-		for (let route of routes) {
-			route.start = new Date(route.start * 1000)
-			route.end = new Date(route.end * 1000)
-			for (let part of route.parts) {
+	return request('/journeys', q)
+	.then((journeys) => {
+		for (let journey of journeys) {
+			journey.start = new Date(journey.start * 1000)
+			journey.end = new Date(journey.end * 1000)
+			for (let part of journey.parts) {
 				part.start = new Date(part.start * 1000)
 				part.end = new Date(part.end * 1000)
 			}
 		}
-		return routes
+		return journeys
 	})
 }
 
@@ -158,7 +158,7 @@ module.exports = {
 	stations, nearby,
 	station, departures,
 	lines, line,
-	routes,
+	journeys,
 	locations,
 	map,
 	radar

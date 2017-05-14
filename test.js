@@ -173,17 +173,17 @@ test('line()', (t) => {
 	.catch((err) => t.fail(err.message))
 })
 
-test('routes() with station IDs', (t) => {
+test('journeys() with station IDs', (t) => {
 	t.plan(6 + 1 * 6)
 
-	t.throws(() => client.routes())
-	t.throws(() => client.routes(null))
-	t.throws(() => client.routes({}))
-	t.throws(() => client.routes(123))
-	t.throws(() => client.routes(123, null))
-	t.throws(() => client.routes(123, {}))
+	t.throws(() => client.journeys())
+	t.throws(() => client.journeys(null))
+	t.throws(() => client.journeys({}))
+	t.throws(() => client.journeys(123))
+	t.throws(() => client.journeys(123, null))
+	t.throws(() => client.journeys(123, {}))
 
-	const s = client.routes('900000012103', '900000013102', {
+	const s = client.journeys('900000012103', '900000013102', {
 		when, results: 1,
 		identifier: 'vbb-client-test'
 	})
@@ -200,10 +200,10 @@ test('routes() with station IDs', (t) => {
 	.catch((err) => t.fail(err.message))
 })
 
-test('routes() with an address', (t) => {
+test('journeys() with an address', (t) => {
 	t.plan(7)
 
-	const s = client.routes('900000042101', {
+	const s = client.journeys('900000042101', {
 		type: 'address', name: 'Torfstraße 17',
 		latitude: 52.5416823, longitude: 13.3491223
 	}, {
@@ -224,10 +224,10 @@ test('routes() with an address', (t) => {
 	.catch((err) => t.fail(err.message))
 })
 
-test('routes() with a poi', (t) => {
+test.skip('journeys() with a poi', (t) => {
 	t.plan(8)
 
-	const s = client.routes('900000042101', {
+	const s = client.journeys('900000042101', {
 		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
 		latitude: 52.543333, longitude: 13.351686
 	}, {
