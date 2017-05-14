@@ -7,27 +7,6 @@ const ndjson = require('ndjson').parse
 
 
 
-const err = (res) => {
-	if (res instanceof Error) return res
-	const e = new Error(res.statusText)
-	e.statusCode = res.status
-	return e
-}
-
-const streaming = (req) => {
-	const out = new PassThrough()
-	req.then(
-		  (res) => res.body.pipe(out)
-		, (e) => out.emit('error', e))
-	return out
-}
-
-const promised = (req) => req.then(
-	  (res) => res.json()
-	, (e) => {throw e})
-
-
-
 const endpoint = 'https://transport.rest'
 
 const request = (route, query, stream) => {
@@ -41,16 +20,31 @@ const request = (route, query, stream) => {
 	}
 	const url = endpoint + route + '?' + qs.stringify(query)
 
-	const req = fetch(url, {mode: 'cors', redirect: 'follow', headers})
-	.then(
-		(res) => {
-			if (!res.ok) throw err(res)
-			return res
-		},
-		(res) => {throw err(res)})
+	const req = fetch(url, {
+		mode: 'cors', redirect: 'follow', headers
+	})
+	.then((res) => {
+		if (!res.ok) {
+			const err = new Error(res.statusText)
+			err.statusCode = res.status
+			throw err
+		}
+		return res
+	})
 
-	if (stream === true) return streaming(req)
-	else return promised(req)
+	if (stream === true) {
+		const out = new PassThrough()
+		req
+		.then((res) => {
+			res.body.pipe(out)
+		})
+		.catch((err) => {
+			out.emit('error', err)
+		})
+		return out
+	}
+
+	return req.then((res) => res.json())
 }
 
 
@@ -83,7 +77,7 @@ const departures = (id, q) => {
 	.then((deps) => {
 		for (let dep of deps) dep.when = new Date(dep.when * 1000)
 		return deps
-	}, (err) => err)
+	})
 }
 
 
@@ -128,7 +122,7 @@ const routes = (from, to, q) => {
 			}
 		}
 		return routes
-	}, (err) => err)
+	})
 }
 
 

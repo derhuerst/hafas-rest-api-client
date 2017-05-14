@@ -41,13 +41,14 @@ test('stations() with completion', (t) => {
 		identifier: 'vbb-client-test'
 	})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((data) => {
 		t.ok(Array.isArray(data))
 		const s = data.find((s) => s.id === '900000012103')
 		t.equal(s.id, '900000012103')
 		t.equal(s.name, 'U Hallesches Tor')
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('stations() without completion', (t) => {
@@ -79,7 +80,7 @@ test('nearby()', (t) => {
 		identifier: 'vbb-client-test'
 	})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((data) => {
 		t.ok(Array.isArray(data))
 		t.equal(data.length, 4)
@@ -94,6 +95,7 @@ test('nearby()', (t) => {
 			t.ok(l.distance <= 1000)
 		}
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('station()', (t) => {
@@ -105,13 +107,14 @@ test('station()', (t) => {
 
 	const s = client.station('900000012103', {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((s) => {
 		t.ok(isHalleschesTor(s))
 		t.equal(typeof s.weight, 'number')
 		t.ok(s.weight > 0)
 		t.ok(Array.isArray(s.lines))
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('departures()', (t) => {
@@ -126,7 +129,7 @@ test('departures()', (t) => {
 		identifier: 'vbb-client-test'
 	})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((deps) => {
 		t.ok(Array.isArray(deps))
 		t.ok(deps.length >= 1)
@@ -135,6 +138,7 @@ test('departures()', (t) => {
 		t.ok(validWhen(dep.when))
 		t.ok(dep.product)
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('lines()', (t) => {
@@ -161,11 +165,12 @@ test('line()', (t) => {
 
 	const s = client.line('17442_900', {identifier: 'vbb-client-test'})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((l) => {
 		t.ok(isM13(l))
 		t.ok(Array.isArray(l.variants))
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('routes() with station IDs', (t) => {
@@ -182,7 +187,7 @@ test('routes() with station IDs', (t) => {
 		when, results: 1,
 		identifier: 'vbb-client-test'
 	})
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((r) => {
 		t.ok(Array.isArray(r))
 		t.equal(r.length, 1)
@@ -192,6 +197,7 @@ test('routes() with station IDs', (t) => {
 		t.ok(validWhen(r.end))
 		t.ok(isKottbusserTor(r.to))
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('routes() with an address', (t) => {
@@ -204,7 +210,7 @@ test('routes() with an address', (t) => {
 		when, results: 1,
 		identifier: 'vbb-client-test'
 	})
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((r) => {
 		t.ok(Array.isArray(r))
 		t.equal(r.length, 1)
@@ -215,6 +221,7 @@ test('routes() with an address', (t) => {
 		t.ok(isRoughlyEqual(.0001, last.to.latitude, 52.541679))
 		t.ok(isRoughlyEqual(.0001, last.to.longitude, 13.349116))
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('routes() with a poi', (t) => {
@@ -227,7 +234,7 @@ test('routes() with a poi', (t) => {
 		when, results: 1,
 		identifier: 'vbb-client-test'
 	})
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((r) => {
 		t.ok(Array.isArray(r))
 		t.equal(r.length, 1)
@@ -239,6 +246,7 @@ test('routes() with a poi', (t) => {
 		t.ok(isRoughlyEqual(.0001, last.to.latitude, 52.543333))
 		t.ok(isRoughlyEqual(.0001, last.to.longitude, 13.351686))
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('locations()', (t) => {
@@ -253,7 +261,7 @@ test('locations()', (t) => {
 		identifier: 'vbb-client-test'
 	})
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
+	s
 	.then((locations) => {
 		t.ok(Array.isArray(locations))
 		t.equal(locations.length, 10)
@@ -276,6 +284,7 @@ test('locations()', (t) => {
 		const a = locations.find((l) => l.type === 'address')
 		t.ok(a)
 	})
+	.catch((err) => t.fail(err.message))
 })
 
 test('map()', (t) => {
@@ -294,11 +303,12 @@ test('map()', (t) => {
 
 
 
-test('radar()', (t) => {
+test.skip('radar()', (t) => {
 	t.plan(2)
 
 	const s = client.radar(52.52411, 13.41002, 52.51942, 13.41709)
 	t.ok(isPromise(s))
-	s.catch((err) => t.fail(err.message))
-	s.then((movements) => t.ok(Array.isArray(movements)))
+	s
+	.then((movements) => t.ok(Array.isArray(movements)))
+	.catch((err) => t.fail(err.message))
 })
