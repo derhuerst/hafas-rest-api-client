@@ -6,7 +6,8 @@ const isPromise = require('is-promise')
 const isStream = require('is-stream')
 const isRoughlyEqual = require('is-roughly-equal')
 const floor = require('floordate')
-const client = require('./index')
+
+const client = require('.')
 
 
 
@@ -92,7 +93,8 @@ test('nearby()', (t) => {
 	s
 	.then((data) => {
 		t.ok(Array.isArray(data))
-		t.equal(data.length, 4)
+		t.ok(data.length > 0)
+
 		for (let l of data) {
 			t.ok(l)
 			t.equal(l.type, 'station')
@@ -334,6 +336,6 @@ test('radar()', (t) => {
 	const s = client.radar(52.52411, 13.41002, 52.51942, 13.41709)
 	t.ok(isPromise(s))
 	s
-	.then((movements) => t.ok(Array.isArray(movements)))
+	.then((movements) => t.ok(Array.isArray(movements))) // todo
 	.catch((err) => t.fail(err.message))
 })

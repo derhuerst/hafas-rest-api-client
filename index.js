@@ -2,7 +2,7 @@
 
 const PassThrough = require('stream').PassThrough
 const qs = require('querystring')
-const fetch = require('isomorphic-fetch')
+const {fetch} = require('fetch-ponyfill')()
 const ndjson = require('ndjson').parse
 
 
