@@ -221,7 +221,7 @@ test('journeys() with an address', (t) => {
 
 	const s = client.journeys('900000042101', {
 		type: 'address', name: 'Torfstraße 17',
-		latitude: 52.5416823, longitude: 13.3491223
+		coordinates: {latitude: 52.5416823, longitude: 13.3491223}
 	}, {
 		when, results: 1,
 		identifier: 'vbb-client-test'
@@ -250,7 +250,7 @@ test('journeys() with a poi', (t) => {
 
 	const s = client.journeys('900000042101', {
 		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
-		latitude: 52.543333, longitude: 13.351686
+		coordinates: {latitude: 52.543333, longitude: 13.351686}
 	}, {
 		when, results: 1,
 		identifier: 'vbb-client-test'

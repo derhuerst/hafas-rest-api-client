@@ -96,8 +96,8 @@ const location = (l, t, q) => {
 	if (l.type === 'station') {q[t] = l.id; return q}
 	if (l.type === 'poi' || l.type === 'address') {
 		q[t + '.name'] = l.name
-		q[t + '.longitude'] = l.longitude
-		q[t + '.latitude'] = l.latitude
+		q[t + '.longitude'] = l.coordinates.longitude
+		q[t + '.latitude'] = l.coordinates.latitude
 		if (l.type === 'poi') q[t + '.id'] = l.id
 		return q
 	}
