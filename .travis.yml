@@ -1,6 +1,7 @@
-sudo: false
+sudo: required
 language: node_js
 node_js:
   - 'stable'
+  - '8'
   - '7'
   - '6'
