@@ -8,14 +8,15 @@ const floor = require('floordate')
 
 const client = require('.')
 
-
-
 const hour = 60 * 60 * 1000
-const when = new Date(+floor(new Date(), 'day') + 10 * hour)
-const isValidWhen = (w) => {
-	const d = new Date(w)
-	if (Number.isNaN(+d)) return false // invalid date
-	return isRoughlyEqual(2 * hour, +when, d)
+const week = 7 * 24 * hour
+// next Monday
+const when = new Date(+floor(new Date(), 'week') + week + 10 * hour)
+
+const assertValidWhen = (t, w) => {
+	const ts = +new Date(w)
+	t.ok(!Number.isNaN(ts), 'invalid date')
+	return isRoughlyEqual(2 * hour, +when, ts)
 }
 
 const isHalleschesTor = (s) => s
@@ -148,7 +149,7 @@ test('departures() without nextStation', (t) => {
 		t.ok(deps.length >= 1)
 		const dep = deps[0]
 		t.ok(isHalleschesTor(dep.station))
-		t.ok(isValidWhen(dep.when))
+		assertValidWhen(t, dep.when)
 		t.ok(dep.line)
 		t.ok(dep.line.name)
 		t.ok(dep.line.mode)
@@ -175,7 +176,7 @@ test('departures() with nextStation', (t) => {
 			t.ok(dep.line)
 			t.equal(dep.line.name, 'U1')
 
-			t.ok(isValidWhen(dep.when))
+			assertValidWhen(t, dep.when)
 		}
 	})
 	.catch(t.ifError)
@@ -232,9 +233,9 @@ test('journeys() with station IDs', (t) => {
 		t.ok(Array.isArray(r))
 		t.equal(r.length, 1)
 		r = r[0]
-		t.ok(isValidWhen(r.departure))
+		assertValidWhen(t, r.departure)
 		t.ok(isHalleschesTor(r.origin))
-		t.ok(isValidWhen(r.arrival))
+		assertValidWhen(t, r.arrival)
 		t.ok(isKottbusserTor(r.destination))
 	})
 	.catch((err) => t.fail(err.message))
@@ -256,7 +257,7 @@ test('journeys() with an address', (t) => {
 		t.equal(r.length, 1)
 		const last = r[0].parts[r[0].parts.length - 1]
 
-		t.ok(isValidWhen(last.arrival))
+		assertValidWhen(t, last.arrival)
 
 		const d = last.destination
 		t.equal(d.type, 'address')
@@ -285,7 +286,7 @@ test('journeys() with a poi', (t) => {
 		t.equal(r.length, 1)
 		const last = r[0].parts[r[0].parts.length - 1]
 
-		t.ok(isValidWhen(last.arrival))
+		assertValidWhen(t, last.arrival)
 
 		const d = last.destination
 		t.equal(d.type, 'poi')
