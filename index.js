@@ -66,11 +66,17 @@ const station = (id, q) => {
 }
 
 const departures = (id, q) => {
-	if ('number' !== typeof id && 'string' !== typeof id)
+	if ('number' !== typeof id && 'string' !== typeof id) {
 		throw new Error('id must be a number or a string')
+	}
 	q = q || {}
-	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date))
+	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date)) {
 		q.when = Math.round(q.when / 1000)
+	}
+	if (('nextStation' in q) && 'string' !== typeof q.nextStation) {
+		throw new Error('nextStation parameter must be a string')
+	}
+
 	return request(`/stations/${id}/departures`, q)
 	.then((deps) => {
 		for (let dep of deps) dep.when = new Date(dep.when)

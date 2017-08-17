@@ -130,7 +130,7 @@ test('station()', (t) => {
 	.catch((err) => t.fail(err.message))
 })
 
-test('departures()', (t) => {
+test('departures() without nextStation', (t) => {
 	t.plan(3 + 8)
 
 	t.throws(() => client.departures())
@@ -154,6 +154,31 @@ test('departures()', (t) => {
 		t.ok(dep.line.mode)
 	})
 	.catch((err) => t.fail(err.message))
+})
+
+test('departures() with nextStation', (t) => {
+	t.plan(2 + 5 * 5)
+
+	client.departures('900000012103', {
+		nextStation: '900000017104',
+		when, results: 5,
+		identifier: 'vbb-client-test'
+	})
+	.then((deps) => {
+		t.ok(Array.isArray(deps))
+		t.equal(deps.length, 5)
+
+		for (let dep of deps) {
+			t.ok(dep.station)
+			t.equal(dep.station.id, '900000012103')
+
+			t.ok(dep.line)
+			t.equal(dep.line.name, 'U1')
+
+			t.ok(isValidWhen(dep.when))
+		}
+	})
+	.catch(t.ifError)
 })
 
 test('lines()', (t) => {
