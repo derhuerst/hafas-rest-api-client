@@ -21,18 +21,29 @@ npm install vbb-client
 
 ## Usage
 
-`vbb-client` wraps the [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) API deployed at `vbb.transport.rest`. Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
+```js
+const vbb = require('vbb-client')
+
+vbb.journeys('900000003201', '900000024101', {results: 1})
+.then(console.log)
+.catch(console.error)
+```
+
+
+## API
+
+`vbb-client` is a client for the [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) API deployed at `vbb.transport.rest`. Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
 
 It wraps the following routes:
 
-- `/stations?query=…` as `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
-- `/stations/nearby` as `nearby([query])` → [`Promise`][promise]
-- `/stations/:id` as `station(id)` → [`Promise`][promise]
-- `/stations/:id/departures` as `departures(id, [query])` → [`Promise`][promise]
-- `/lines?query=…` as `lines([query])` → [`stream.Readable`][stream]
-- `/lines/:id` as `line(id)` → [`Promise`][promise]
-- `/journeys` as `journeys(from, to, [query])` → [`Promise`][promise]
-- `/maps/:type` as `map(type)` → [`stream.Readable`][stream]
+- [`/stations?query=…`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-stationsquery) as `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
+- [`/stations/nearby`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-stationsnearby) as `nearby([query])` → [`Promise`][promise]
+- [`/stations/:id`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-stationsid) as `station(id)` → [`Promise`][promise]
+- [`/stations/:id/departures`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-stationsiddepartures) as `departures(id, [query])` → [`Promise`][promise]
+- [`/lines?query=…`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-lines) as `lines([query])` → [`stream.Readable`][stream]
+- [`/lines/:id`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-linesid) as `line(id)` → [`Promise`][promise]
+- [`/journeys`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-journeys) as `journeys(from, to, [query])` → [`Promise`][promise]
+- [`/maps/:type`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md#get-mapstype) as `map(type)` → [`stream.Readable`][stream]
 
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 [stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
