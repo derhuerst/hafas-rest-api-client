@@ -21,16 +21,18 @@ npm install vbb-client
 
 ## Usage
 
-Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
+`vbb-client` wraps the [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) API deployed at `vbb.transport.rest`. Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
 
-- `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
-- `nearby([query])` → [`Promise`][promise]
-- `station(id)` → [`Promise`][promise]
-- `departures(id, [query])` → [`Promise`][promise]
-- `lines([query])` → [`stream.Readable`][stream]
-- `line(id)` → [`Promise`][promise]
-- `journeys(from, to, [query])` → [`Promise`][promise]
-- `map(type)` → [`stream.Readable`][stream]
+It wraps the following routes:
+
+- `/stations?query=…` as `stations([query])` → [`Promise`][promise]/[`stream.Readable`][stream]
+- `/stations/nearby` as `nearby([query])` → [`Promise`][promise]
+- `/stations/:id` as `station(id)` → [`Promise`][promise]
+- `/stations/:id/departures` as `departures(id, [query])` → [`Promise`][promise]
+- `/lines?query=…` as `lines([query])` → [`stream.Readable`][stream]
+- `/lines/:id` as `line(id)` → [`Promise`][promise]
+- `/journeys` as `journeys(from, to, [query])` → [`Promise`][promise]
+- `/maps/:type` as `map(type)` → [`stream.Readable`][stream]
 
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 [stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
