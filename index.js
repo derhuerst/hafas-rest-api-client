@@ -18,6 +18,10 @@ const request = (route, query, stream) => {
 		headers['X-Identifier'] = query.identifier
 		delete query.identifier
 	}
+	if (query.products) {
+		Object.assign(query, query.products)
+		delete query.products
+	}
 	const url = endpoint + route + '?' + qs.stringify(query)
 
 	const req = fetch(url, {

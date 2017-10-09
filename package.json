@@ -1,15 +1,25 @@
 {
-	"name":         "vbb-client",
-	"description":  "An API client for Berlin & Brandenburg public transport.",
-	"version":      "2.1.0",
-	"main":         "index.js",
-	"files":        ["index.js"],
-	"keywords":     ["vbb", "bvg", "public", "transport", "berlin"],
-	"author":       "Jannis R <mail@jannisr.de>",
-	"homepage":     "https://github.com/derhuerst/vbb-client",
-	"repository":   "derhuerst/vbb-client",
-	"license":      "ISC",
-	"engines":      {"node": ">=6"},
+	"name": "vbb-client",
+	"description": "An API client for Berlin & Brandenburg public transport.",
+	"version": "2.1.1",
+	"main": "index.js",
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"vbb",
+		"bvg",
+		"public",
+		"transport",
+		"berlin"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"homepage": "https://github.com/derhuerst/vbb-client",
+	"repository": "derhuerst/vbb-client",
+	"license": "ISC",
+	"engines": {
+		"node": ">=6"
+	},
 	"dependencies": {
 		"fetch-ponyfill": "^4.0.0",
 		"ndjson": "^1.4.3"
