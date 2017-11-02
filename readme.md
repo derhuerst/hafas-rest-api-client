@@ -1,6 +1,6 @@
 # *vbb-client*
 
-**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md).
+**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [the `vbb-rest` endpoint deployed at `vbb.transport.rest`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md).
 
 *vbb-client* works both in the Browser (using [Browserify](http://browserify.org/)) and in Node.js.
 
@@ -32,7 +32,7 @@ vbb.journeys('900000003201', '900000024101', {results: 1})
 
 ## API
 
-`vbb-client` is a client for the [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) API deployed at `vbb.transport.rest`. Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.
+`vbb-client` is a client for the [vbb-rest](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) API deployed at `vbb.transport.rest`. **Refer to the [API docs](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md) for available parameters.**
 
 It wraps the following routes:
 
