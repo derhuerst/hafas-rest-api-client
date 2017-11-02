@@ -35,6 +35,21 @@ const isKottbusserTor = (s) => s
 
 const BVG = '796'
 
+const isM13 = (t, l) => {
+	t.ok(l)
+	t.equal(l.type, 'line')
+	t.equal(l.name, 'M13')
+	t.equal(l.operator, BVG)
+
+	t.equal(typeof l.id, 'string')
+	t.ok(l.id)
+
+	t.equal(typeof l.mode, 'string') // todo: validate strictly
+	t.ok(l.mode) // todo: validate strictly
+	t.equal(typeof l.product, 'string') // todo: validate strictly
+	t.ok(l.product) // todo: validate strictly
+}
+
 
 
 test('stations() with completion', (t) => {
@@ -187,19 +202,7 @@ test('lines()', (t) => {
 		t.fail(err.message)
 	})
 	.on('data', (l) => {
-		t.ok(l)
-		t.equal(l.type, 'line')
-		t.equal(l.name, 'M13')
-		t.equal(l.operator, BVG)
-
-		t.equal(typeof l.id, 'string')
-		t.ok(l.id)
-
-		t.equal(typeof l.mode, 'string') // todo: validate strictly
-		t.ok(l.mode) // todo: validate strictly
-		t.equal(typeof l.product, 'string') // todo: validate strictly
-		t.ok(l.product) // todo: validate strictly
-
+		isM13(t, l)
 		t.ok(Array.isArray(l.variants))
 	})
 	.once('end', () => {
@@ -208,8 +211,6 @@ test('lines()', (t) => {
 })
 
 test('line()', (t) => {
-	t.plan(4 + 1 * 2)
-
 	t.throws(() => client.line())
 	t.throws(() => client.line(null))
 	t.throws(() => client.line({}))
@@ -218,10 +219,13 @@ test('line()', (t) => {
 	t.ok(isPromise(s))
 	s
 	.then((l) => {
-		t.ok(isM13(l))
+		isM13(t, l)
 		t.ok(Array.isArray(l.variants))
+		t.end()
 	})
-	.catch((err) => t.fail(err.message))
+	.catch((err) => {
+		t.fail(err.message)
+	})
 })
 
 test('journeys() with station IDs', (t) => {
