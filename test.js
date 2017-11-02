@@ -33,13 +33,7 @@ const isKottbusserTor = (s) => s
 	&& isRoughlyEqual(.0001, s.coordinates.latitude, 52.499044)
 	&& isRoughlyEqual(.0001, s.coordinates.longitude, 13.417748)
 
-const isM13 = (l) => l
-	&& l.type === 'line'
-	&& l.id === '17442_900'
-	&& l.name === 'M13'
-	&& l.mode === 'tram'
-	&& l.product === 'tram'
-	&& l.operator === '796'
+const BVG = '796'
 
 
 
@@ -183,18 +177,34 @@ test('departures() with nextStation', (t) => {
 })
 
 test('lines()', (t) => {
-	t.plan(2 + 1 * 2)
 	const s = client.lines({
 		variants: true, name: 'M13',
 		identifier: 'vbb-client-test'
 	})
+
 	t.ok(isStream(s))
-	s.on('error', (err) => t.fail(err.message))
+	s.on('error', (err) => {
+		t.fail(err.message)
+	})
 	.on('data', (l) => {
-		t.ok(isM13(l))
+		t.ok(l)
+		t.equal(l.type, 'line')
+		t.equal(l.name, 'M13')
+		t.equal(l.operator, BVG)
+
+		t.equal(typeof l.id, 'string')
+		t.ok(l.id)
+
+		t.equal(typeof l.mode, 'string') // todo: validate strictly
+		t.ok(l.mode) // todo: validate strictly
+		t.equal(typeof l.product, 'string') // todo: validate strictly
+		t.ok(l.product) // todo: validate strictly
+
 		t.ok(Array.isArray(l.variants))
 	})
-	.on('end', () => t.pass('end event'))
+	.once('end', () => {
+		t.end()
+	})
 })
 
 test('line()', (t) => {
@@ -274,7 +284,9 @@ test('journeys() with a poi', (t) => {
 	t.plan(9)
 
 	const s = client.journeys('900000042101', {
-		type: 'poi', name: 'ATZE Musiktheater', id: 9980720,
+		type: 'poi',
+		id: '900000980720',
+		name: 'Berlin, Atze Musiktheater für Kinder',
 		coordinates: {latitude: 52.543333, longitude: 13.351686}
 	}, {
 		when, results: 1,
@@ -290,8 +302,8 @@ test('journeys() with a poi', (t) => {
 
 		const d = last.destination
 		t.equal(d.type, 'poi')
-		t.equal(d.name, 'ATZE Musiktheater')
-		t.equal(d.id, '9980720')
+		t.equal(d.id, '900000980720')
+		t.equal(d.name, 'Berlin, Atze Musiktheater für Kinder')
 
 		t.ok(d.coordinates)
 		t.ok(isRoughlyEqual(.0001, d.coordinates.latitude, 52.543333))
