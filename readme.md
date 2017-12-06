@@ -1,6 +1,11 @@
 # *vbb-client*
 
-**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [the `vbb-rest` endpoint deployed at `vbb.transport.rest`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md).
+**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [the `vbb-rest` endpoint deployed at `vbb.transport.rest`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md):
+
+```
+vbb-client  --->        vbb-rest      --->  VBB API
+            <---  vbb.transport.rest  <---
+```
 
 *vbb-client* works both in the Browser (using [Browserify](http://browserify.org/)) and in Node.js.
 
