@@ -1,13 +1,8 @@
 # *vbb-client*
 
-**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest)** that talks to [the `vbb-rest` endpoint deployed at `vbb.transport.rest`](https://github.com/derhuerst/vbb-rest/blob/master/docs/index.md):
+**A client for the [Berlin & Brandenburg public transport API](https://github.com/derhuerst/vbb-rest/blob/old-api/docs/index.md)** deployed at `vbb.transport.rest`. Works both in the Browser (using a [bundler](https://medium.com/@gimenete/how-javascript-bundlers-work-1fc0d0caf2da)) and in [Node](https://nodejs.org/en/).
 
-```
-vbb-client  --->        vbb-rest      --->  VBB API
-            <---  vbb.transport.rest  <---
-```
-
-*vbb-client* works both in the Browser (using [Browserify](http://browserify.org/)) and in Node.js.
+*Note*: This version of `vbb-client` (`2.x`) talks to the old, deprecated version of the API at `vbb.transport.rest`. **Please update to `vbb-client@3`** to make sure everything keeps working.
 
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
 [![build status](https://img.shields.io/travis/derhuerst/vbb-client.svg)](https://travis-ci.org/derhuerst/vbb-client)
