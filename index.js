@@ -26,7 +26,7 @@ const station = (id, query = {}) => {
 	}
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-	return request('/stations/' + id, q || {})
+	return request('/stations/' + id, query)
 }
 
 const departures = (id, query = {}) => {
@@ -43,7 +43,7 @@ const departures = (id, query = {}) => {
 	}
 	if (
 		!isProd && ('nextStation' in query) &&
-		'string' !== typeof query.nextStation || !query.nextStation
+		('string' !== typeof query.nextStation || !query.nextStation)
 	) {
 		throw new Error('query.nextStation must be a non-empty string.')
 	}
@@ -79,20 +79,25 @@ const location = (loc, key, query) => {
 		return query
 	}
 	if (isObj(loc)) {
+		const isStation = loc.type === 'station'
+		const isPoi = loc.type === 'location' && ('id' in loc)
+		const isAddress = loc.type === 'location' && ('address' in loc)
 		if (
-			!isProd && (loc.type === 'station' || loc.type === 'poi') &&
-			'string' !== typeof loc.id || !loc.id
+			!isProd && (isStation || isPoi) &&
+			('string' !== typeof loc.id || !loc.id)
 		) throw new Error(key + '.id must be a non-empty string.')
 
-		if (loc.type === 'station') {
+		if (isStation) {
 			query[key] = loc.id
 			return query
 		}
-		if (loc.type === 'poi' || loc.type === 'address') {
-			query[key + '.name'] = loc.name
-			query[key + '.longitude'] = loc.location.longitude
-			query[key + '.latitude'] = loc.location.latitude
-			if (loc.type === 'poi') query[key + '.id'] = loc.id
+		if (isPoi || isAddress) {
+			query[key + '.longitude'] = loc.longitude
+			query[key + '.latitude'] = loc.latitude
+			if (isPoi) {
+				query[key + '.id'] = loc.id
+				query[key + '.name'] = loc.name
+			} else query[key + '.address'] = loc.address
 			return query
 		}
 	}
@@ -156,7 +161,7 @@ const map = (type, query = {}) => {
 	if (!isProd && 'string' !== typeof type || !type) {
 		throw new Error('type must be a non-empty string.')
 	}
-	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	return request('/maps/' + type, query, new PassThrough())
 }
@@ -166,7 +171,7 @@ const radar = (north, west, south, east, query = {}) => {
 	if ('number' !== typeof west) throw new Error('west must be a number')
 	if ('number' !== typeof south) throw new Error('south must be a number')
 	if ('number' !== typeof east) throw new Error('east must be a number')
-	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	query = Object.assign({}, query, {north, west, south, east})
 	return request('/radar', query)
