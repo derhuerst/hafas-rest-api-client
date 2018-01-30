@@ -1,19 +1,20 @@
 'use strict'
 
-const PassThrough = require('stream').PassThrough
+const {PassThrough} = require('stream')
 const qs = require('querystring')
-const {fetch} = require('fetch-ponyfill')()
+const Promise = require('pinkie-promise')
+const {fetch} = require('fetch-ponyfill')({Promise})
 const ndjson = require('ndjson').parse
 
-
-
 const endpoint = 'https://vbb.transport.rest'
+const userAgent = 'https://github.com/derhuerst/vbb-client'
 
 const request = (route, query, stream) => {
 	if ('string' !== typeof route) throw new Error('route must be a string')
 	if ('object' !== typeof query) throw new Error('query must be an object')
 
-	const headers = {'User-Agent': 'vbb-client'}
+	const headers = {'User-Agent': userAgent}
+	query = Object.assign({}, query)
 	if ('identifier' in query) {
 		headers['X-Identifier'] = query.identifier
 		delete query.identifier
@@ -22,14 +23,20 @@ const request = (route, query, stream) => {
 		Object.assign(query, query.products)
 		delete query.products
 	}
-	const url = endpoint + route + '?' + qs.stringify(query)
 
-	const req = fetch(url, {
-		mode: 'cors', redirect: 'follow', headers
+	// Async stack traces are not supported everywhere yet, so we create our own.
+	const err = new Error()
+	err.isHafasError = true
+	err.request = body
+
+	const req = fetch(endpoint + route + '?' + qs.stringify(query), {
+		mode: 'cors',
+		redirect: 'follow',
+		headers
 	})
 	.then((res) => {
 		if (!res.ok) {
-			const err = new Error(res.statusText)
+			err.message = res.statusText
 			err.statusCode = res.status
 			throw err
 		}
@@ -38,20 +45,21 @@ const request = (route, query, stream) => {
 
 	if (stream === true) {
 		const out = new PassThrough()
+		const onError = err => out.destroy(err)
+
 		req
 		.then((res) => {
+			res.body.once('error', onError)
 			res.body.pipe(out)
 		})
-		.catch((err) => {
-			out.emit('error', err)
-		})
+		.catch(onError)
+
 		return out
 	}
 
-	return req.then((res) => res.json())
+	return req
+	.then(res => res.json())
 }
-
-
 
 const stations = (q) => {
 	q = q || {}
