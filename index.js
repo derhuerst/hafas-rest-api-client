@@ -90,8 +90,8 @@ const location = (loc, key, query) => {
 		}
 		if (loc.type === 'poi' || loc.type === 'address') {
 			query[key + '.name'] = loc.name
-			query[key + '.longitude'] = loc.coordinates.longitude
-			query[key + '.latitude'] = loc.coordinates.latitude
+			query[key + '.longitude'] = loc.location.longitude
+			query[key + '.latitude'] = loc.location.latitude
 			if (loc.type === 'poi') query[key + '.id'] = loc.id
 			return query
 		}
@@ -115,13 +115,22 @@ const journeys = (from, to, query = {}) => {
 		for (let j of journeys) {
 			if (j.departure) j.departure = new Date(j.departure)
 			if (j.arrival) j.arrival = new Date(j.arrival)
-			for (let part of j.parts) {
-				if (part.departure) part.departure = new Date(part.departure)
-				if (part.arrival) part.arrival = new Date(part.arrival)
+			for (let leg of j.legs) {
+				if (leg.departure) leg.departure = new Date(leg.departure)
+				if (leg.arrival) leg.arrival = new Date(leg.arrival)
 			}
 		}
 		return journeys
 	})
+}
+
+const journeyLeg = (ref, query = {}) => {
+	if (!isProd && 'string' !== typeof ref || !ref) {
+		throw new Error('ref must be a non-empty string.')
+	}
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
+
+	return request('/journeys/legs/' + ref, query)
 }
 
 const locations = (query, params = {}) => {
