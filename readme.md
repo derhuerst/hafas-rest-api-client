@@ -5,9 +5,6 @@
 ![architecture](https://cdn.rawgit.com/derhuerst/vbb-rest/2/architecture.svg)
 
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
-[![build status](https://img.shields.io/travis/derhuerst/vbb-client.svg)](https://travis-ci.org/derhuerst/vbb-client)
-[![dependency status](https://img.shields.io/david/derhuerst/vbb-client.svg)](https://david-dm.org/derhuerst/vbb-client)
-[![dev dependency status](https://img.shields.io/david/dev/derhuerst/vbb-client.svg)](https://david-dm.org/derhuerst/vbb-client#info=devDependencies)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-client.svg)
 [![gitter channel](https://badges.gitter.im/derhuerst/vbb-rest.svg)](https://gitter.im/derhuerst/vbb-rest)
 
@@ -53,4 +50,4 @@ It wraps the following routes:
 
 ## Contributing
 
-If you **have a question**, **found a bug** or want to **propose a feature**, have a look at [the issues page](https://github.com/derhuerst/vbb-client/issues).
+If you have a question or have difficulties using `vbb-client`, please double-check your code and setup first. If you think you have found a bug or want to propose a feature, refer to [the issues page](https://github.com/derhuerst/vbb-client/issues).

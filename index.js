@@ -115,9 +115,17 @@ const journeys = (from, to, query = {}) => {
 		for (let j of journeys) {
 			if (j.departure) j.departure = new Date(j.departure)
 			if (j.arrival) j.arrival = new Date(j.arrival)
+
 			for (let leg of j.legs) {
 				if (leg.departure) leg.departure = new Date(leg.departure)
 				if (leg.arrival) leg.arrival = new Date(leg.arrival)
+
+				if (Array.isArray(leg.passed)) {
+					for (s of leg.passed) {
+						if (s.arrival) s.arrival = new Date(s.arrival)
+						if (s.departure) s.departure = new Date(s.departure)
+					}
+				}
 			}
 		}
 		return journeys
