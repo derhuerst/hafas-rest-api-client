@@ -1,133 +1,116 @@
 'use strict'
 
-const {PassThrough} = require('stream')
-const qs = require('querystring')
-const Promise = require('pinkie-promise')
-const {fetch} = require('fetch-ponyfill')({Promise})
 const ndjson = require('ndjson').parse
+const {PassThrough} = require('stream')
 
-const endpoint = 'https://vbb.transport.rest'
-const userAgent = 'https://github.com/derhuerst/vbb-client'
+const request = require('./lib/request')
 
-const request = (route, query, stream) => {
-	if ('string' !== typeof route) throw new Error('route must be a string')
-	if ('object' !== typeof query) throw new Error('query must be an object')
+const isProd = process.env.NODE_ENV === 'production'
+const isObj = o => 'object' === typeof o && !Array.isArray(o)
 
-	const headers = {'User-Agent': userAgent}
-	query = Object.assign({}, query)
-	if ('identifier' in query) {
-		headers['X-Identifier'] = query.identifier
-		delete query.identifier
-	}
-	if (query.products) {
-		Object.assign(query, query.products)
-		delete query.products
-	}
+const stations = (query = {}) => {
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-	// Async stack traces are not supported everywhere yet, so we create our own.
-	const err = new Error()
-	err.isHafasError = true
-	err.request = body
-
-	const req = fetch(endpoint + route + '?' + qs.stringify(query), {
-		mode: 'cors',
-		redirect: 'follow',
-		headers
-	})
-	.then((res) => {
-		if (!res.ok) {
-			err.message = res.statusText
-			err.statusCode = res.status
-			throw err
-		}
-		return res
-	})
-
-	if (stream === true) {
-		const out = new PassThrough()
-		const onError = err => out.destroy(err)
-
-		req
-		.then((res) => {
-			res.body.once('error', onError)
-			res.body.pipe(out)
-		})
-		.catch(onError)
-
-		return out
-	}
-
-	return req
-	.then(res => res.json())
+	return request('/stations', query, false)
 }
 
-const stations = (q) => {
-	q = q || {}
-	return request('/stations', q, false)
+const nearby = (query = {}) => {
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
+
+	return request('/stations/nearby', query)
 }
 
-const nearby = (q) =>
-	request('/stations/nearby', q || {})
+const station = (id, query = {}) => {
+	if (!isProd && 'string' !== typeof id || !id) {
+		throw new Error('id must be a non-empty string.')
+	}
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-
-
-const station = (id, q) => {
-	if ('number' !== typeof id && 'string' !== typeof id)
-		throw new Error('id must be a number or a string')
 	return request('/stations/' + id, q || {})
 }
 
-const departures = (id, q) => {
-	if ('number' !== typeof id && 'string' !== typeof id) {
-		throw new Error('id must be a number or a string')
-	}
-	q = q || {}
-	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date)) {
-		q.when = Math.round(q.when / 1000)
-	}
-	if (('nextStation' in q) && 'string' !== typeof q.nextStation) {
-		throw new Error('nextStation parameter must be a string')
+const departures = (id, query = {}) => {
+	if (!isProd && 'string' !== typeof id || !id) {
+		throw new Error('id must be a non-empty string.')
 	}
 
-	return request(`/stations/${id}/departures`, q)
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
+	if ('when' in query) {
+		query.when = Math.round(query.when / 1000)
+		if (!isProd && Number.isNaN(query.when)) {
+			throw new Error('query.when must be a number of a Date.')
+		}
+	}
+	if (
+		!isProd && ('nextStation' in query) &&
+		'string' !== typeof query.nextStation || !query.nextStation
+	) {
+		throw new Error('query.nextStation must be a non-empty string.')
+	}
+
+	return request(`/stations/${id}/departures`, query)
 	.then((deps) => {
-		for (let dep of deps) dep.when = new Date(dep.when)
+		for (let dep of deps) {
+			if (dep.when) dep.when = new Date(dep.when)
+		}
 		return deps
 	})
 }
 
+const lines = (query = {}) => {
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-
-const lines = (q) =>
-	request('/lines', q || {}, true).pipe(ndjson())
-
-const line = (id, q) => {
-	if ('number' !== typeof id && 'string' !== typeof id)
-		throw new Error('id must be a number or a string')
-	return request('/lines/' + id, q || {})
+	return request('/lines', query, ndjson())
 }
 
+const line = (id, query = {}) => {
+	if (!isProd && 'string' !== typeof id || !id) {
+		throw new Error('id must be a non-empty string.')
+	}
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-const location = (l, t, q) => {
-	q = q || {}
-	if ('number' === typeof l || 'string' === typeof l) {q[t] = l; return q}
-	if (l.type === 'station') {q[t] = l.id; return q}
-	if (l.type === 'poi' || l.type === 'address') {
-		q[t + '.name'] = l.name
-		q[t + '.longitude'] = l.coordinates.longitude
-		q[t + '.latitude'] = l.coordinates.latitude
-		if (l.type === 'poi') q[t + '.id'] = l.id
-		return q
+	return request('/lines/' + id, query)
+}
+
+const location = (loc, key, query) => {
+	if ('string' === typeof loc) {
+		if (!isProd && !loc) throw new Error(key + ' must not be empty.')
+		query[key] = loc
+		return query
+	}
+	if (isObj(loc)) {
+		if (
+			!isProd && (loc.type === 'station' || loc.type === 'poi') &&
+			'string' !== typeof loc.id || !loc.id
+		) throw new Error(key + '.id must be a non-empty string.')
+
+		if (loc.type === 'station') {
+			query[key] = loc.id
+			return query
+		}
+		if (loc.type === 'poi' || loc.type === 'address') {
+			query[key + '.name'] = loc.name
+			query[key + '.longitude'] = loc.coordinates.longitude
+			query[key + '.latitude'] = loc.coordinates.latitude
+			if (loc.type === 'poi') query[key + '.id'] = loc.id
+			return query
+		}
 	}
 	throw new Error('valid station, address or poi required.')
 }
 
-const journeys = (from, to, q) => {
-	q = q || {}
-	Object.assign(q, location(from, 'from'), location(to, 'to'))
-	if ('when' in q && ('number' === typeof q.when || q.when instanceof Date))
-		q.when = Math.round(q.when / 1000)
-	return request('/journeys', q)
+const journeys = (from, to, query = {}) => {
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
+	query = Object.assign({}, query)
+	Object.assign(query, location(from, 'from', query), location(to, 'to', query))
+	if ('when' in query) {
+		query.when = Math.round(query.when / 1000)
+		if (!isProd && Number.isNaN(query.when)) {
+			throw new Error('query.when must be a number of a Date.')
+		}
+	}
+
+	return request('/journeys', query)
 	.then((journeys) => {
 		for (let j of journeys) {
 			if (j.departure) j.departure = new Date(j.departure)
@@ -141,34 +124,36 @@ const journeys = (from, to, q) => {
 	})
 }
 
+const locations = (query, params = {}) => {
+	if (!isProd && 'string' !== typeof query || !query) {
+		throw new Error('query must be a non-empty string.')
+	}
+	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
 
-
-const locations = (query, q) => {
-	if ('string' !== typeof query) throw new Error('query must be a string')
-	q = q || {}
-	q.query = query
-	return request('/locations', q)
+	params = Object.assign({}, params)
+	params.query = query
+	return request('/locations', params)
 }
 
+const map = (type, query = {}) => {
+	if (!isProd && 'string' !== typeof type || !type) {
+		throw new Error('type must be a non-empty string.')
+	}
+	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
 
-
-const map = (type, q) => {
-	if ('string' !== typeof type) throw new Error('type must be a string')
-	return request('/maps/' + type, q || {}, true)
+	return request('/maps/' + type, query, new PassThrough())
 }
 
-
-
-const radar = (north, west, south, east, q) => {
+const radar = (north, west, south, east, query = {}) => {
 	if ('number' !== typeof north) throw new Error('north must be a number')
 	if ('number' !== typeof west) throw new Error('west must be a number')
 	if ('number' !== typeof south) throw new Error('south must be a number')
 	if ('number' !== typeof east) throw new Error('east must be a number')
-	q = Object.assign(q || {}, {north, west, south, east})
-	return request('/radar', q || {})
+	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
+
+	query = Object.assign({}, query, {north, west, south, east})
+	return request('/radar', query)
 }
-
-
 
 module.exports = {
 	stations, nearby,

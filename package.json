@@ -4,7 +4,8 @@
 	"version": "2.1.2",
 	"main": "index.js",
 	"files": [
-		"index.js"
+		"index.js",
+		"lib"
 	],
 	"keywords": [
 		"vbb",
@@ -22,7 +23,8 @@
 	},
 	"dependencies": {
 		"fetch-ponyfill": "^4.0.0",
-		"ndjson": "^1.4.3"
+		"ndjson": "^1.4.3",
+		"pinkie-promise": "^2.0.1"
 	},
 	"devDependencies": {
 		"tape": "^4.5.1",
