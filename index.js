@@ -126,7 +126,7 @@ const journeys = (from, to, query = {}) => {
 				if (leg.arrival) leg.arrival = new Date(leg.arrival)
 
 				if (Array.isArray(leg.passed)) {
-					for (s of leg.passed) {
+					for (let s of leg.passed) {
 						if (s.arrival) s.arrival = new Date(s.arrival)
 						if (s.departure) s.departure = new Date(s.departure)
 					}
