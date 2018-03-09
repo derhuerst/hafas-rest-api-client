@@ -7,6 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/vbb-client.svg)](https://www.npmjs.com/package/vbb-client)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/vbb-client.svg)
 [![gitter channel](https://badges.gitter.im/derhuerst/vbb-rest.svg)](https://gitter.im/derhuerst/vbb-rest)
+[![support me on Patreon](https://img.shields.io/badge/support%20me-on%20patreon-fa7664.svg)](https://patreon.com/derhuerst)
 
 
 ## Installing
