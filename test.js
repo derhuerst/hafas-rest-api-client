@@ -7,6 +7,8 @@ const {DateTime} = require('luxon')
 
 const client = require('.')
 
+const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
+
 // Monday of next week, 10 am
 const when = DateTime.fromMillis(Date.now(), {
 	zone: 'Europe/Berlin',
@@ -59,6 +61,21 @@ test('nearby()', (t) => {
 	.then((stations) => {
 		t.ok(Array.isArray(stations))
 		t.ok(stations.length > 0)
+	})
+	.catch(t.ifError)
+})
+
+test('allStations()', (t) => {
+	t.plan(3)
+
+	const p1 = client.allStations({
+		identifier: 'vbb-client-test'
+	})
+	t.ok(isPromise(p1))
+	p1
+	.then((stations) => {
+		t.ok(isObj(stations))
+		t.ok(Object.keys(stations).length > 0)
 	})
 	.catch(t.ifError)
 })

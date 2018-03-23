@@ -29,6 +29,12 @@ const station = (id, query = {}) => {
 	return request('/stations/' + id, query)
 }
 
+const allStations = (query = {}) => {
+	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
+
+	return request('/stations/all', query)
+}
+
 const departures = (id, query = {}) => {
 	if (!isProd && 'string' !== typeof id || !id) {
 		throw new Error('id must be a non-empty string.')
@@ -178,7 +184,7 @@ const radar = (north, west, south, east, query = {}) => {
 }
 
 module.exports = {
-	stations, nearby,
+	stations, nearby, allStations,
 	station, departures,
 	lines, line,
 	journeys,
