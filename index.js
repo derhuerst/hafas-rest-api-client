@@ -3,10 +3,27 @@
 const ndjson = require('ndjson').parse
 const {PassThrough} = require('stream')
 
-const request = require('./lib/request')()
+let request;
 
 const isProd = process.env.NODE_ENV === 'production'
 const isObj = o => 'object' === typeof o && !Array.isArray(o)
+
+const configure = (config) => {
+	request = require('./lib/request')(config);
+	return {
+		stations,
+		nearby,
+		allStations,
+		station,
+		departures,
+		lines,
+		line,
+		journeys,
+		locations,
+		map,
+		radar
+	}
+}
 
 const stations = (query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
@@ -183,12 +200,4 @@ const radar = (north, west, south, east, query = {}) => {
 	return request('/radar', query)
 }
 
-module.exports = {
-	stations, nearby, allStations,
-	station, departures,
-	lines, line,
-	journeys,
-	locations,
-	map,
-	radar
-}
+module.exports = configure
