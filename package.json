@@ -36,5 +36,8 @@
 	"scripts": {
 		"test": "node test.js | tap-min",
 		"prepublishOnly": "npm test"
-	}
+	},
+	"contributors": [
+		"deiga <timo.sand@iki.fi>"
+	]
 }
