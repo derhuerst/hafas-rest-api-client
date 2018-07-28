@@ -5,7 +5,7 @@ const isPromise = require('is-promise')
 const isStream = require('is-stream')
 const {DateTime} = require('luxon')
 
-const client = require('.')
+const client = require('.')()
 
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 
