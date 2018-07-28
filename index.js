@@ -3,7 +3,7 @@
 const ndjson = require('ndjson').parse
 const {PassThrough} = require('stream')
 
-const request = require('./lib/request')
+const request = require('./lib/request')()
 
 const isProd = process.env.NODE_ENV === 'production'
 const isObj = o => 'object' === typeof o && !Array.isArray(o)
