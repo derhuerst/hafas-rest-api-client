@@ -20,11 +20,19 @@ npm install vbb-client
 ## Usage
 
 ```js
-const vbb = require('vbb-client')
+const vbb = require('vbb-client')()
 
 vbb.journeys('900000003201', '900000024101', {results: 1})
 .then(console.log)
 .catch(console.error)
+```
+
+### With Custom Endpoint
+
+```js
+const vbb = require('vbb-client')({
+    endpoint: "http://my.local.api",
+})
 ```
 
 
