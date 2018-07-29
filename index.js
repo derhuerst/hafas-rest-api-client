@@ -3,41 +3,39 @@
 const ndjson = require('ndjson').parse
 const {PassThrough} = require('stream')
 
-let request;
-
 const isProd = process.env.NODE_ENV === 'production'
 const isObj = o => 'object' === typeof o && !Array.isArray(o)
 
-	request = require('./lib/request')(config);
 const createClient = (config) => {
+	const request = require('./lib/request')(config);
 	return {
-		stations,
-		nearby,
-		allStations,
-		station,
-		departures,
-		lines,
-		line,
-		journeys,
-		locations,
-		map,
-		radar
+		stations: stations(request),
+		nearby: nearby(request),
+		allStations: allStations(request),
+		station: station(request),
+		departures: departures(request),
+		lines: lines(request),
+		line: line(request),
+		journeys: journeys(request),
+		locations: locations(request),
+		map: map(request),
+		radar: radar(request)
 	}
 }
 
-const stations = (query = {}) => {
+const stations = (request) => (query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	return request('/stations', query, false)
 }
 
-const nearby = (query = {}) => {
+const nearby = (request) => (query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	return request('/stations/nearby', query)
 }
 
-const station = (id, query = {}) => {
+const station = (request) => (id, query = {}) => {
 	if (!isProd && 'string' !== typeof id || !id) {
 		throw new Error('id must be a non-empty string.')
 	}
@@ -46,13 +44,13 @@ const station = (id, query = {}) => {
 	return request('/stations/' + id, query)
 }
 
-const allStations = (query = {}) => {
+const allStations = (request) => (query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	return request('/stations/all', query)
 }
 
-const departures = (id, query = {}) => {
+const departures = (request) => (id, query = {}) => {
 	if (!isProd && 'string' !== typeof id || !id) {
 		throw new Error('id must be a non-empty string.')
 	}
@@ -80,13 +78,13 @@ const departures = (id, query = {}) => {
 	})
 }
 
-const lines = (query = {}) => {
+const lines = (request) =>  (query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
 	return request('/lines', query, ndjson())
 }
 
-const line = (id, query = {}) => {
+const line = (request) =>  (id, query = {}) => {
 	if (!isProd && 'string' !== typeof id || !id) {
 		throw new Error('id must be a non-empty string.')
 	}
@@ -95,7 +93,7 @@ const line = (id, query = {}) => {
 	return request('/lines/' + id, query)
 }
 
-const location = (loc, key, query) => {
+const location = (request) =>  (loc, key, query) => {
 	if ('string' === typeof loc) {
 		if (!isProd && !loc) throw new Error(key + ' must not be empty.')
 		query[key] = loc
@@ -127,10 +125,10 @@ const location = (loc, key, query) => {
 	throw new Error('valid station, address or poi required.')
 }
 
-const journeys = (from, to, query = {}) => {
+const journeys = (request) =>  (from, to, query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 	query = Object.assign({}, query)
-	Object.assign(query, location(from, 'from', query), location(to, 'to', query))
+	Object.assign(query, location(request)(from, 'from', query), location(request)(to, 'to', query))
 	if ('when' in query) {
 		query.when = Math.round(query.when / 1000)
 		if (!isProd && Number.isNaN(query.when)) {
@@ -160,7 +158,7 @@ const journeys = (from, to, query = {}) => {
 	})
 }
 
-const journeyLeg = (ref, query = {}) => {
+const journeyLeg = (request) => (ref, query = {}) => {
 	if (!isProd && 'string' !== typeof ref || !ref) {
 		throw new Error('ref must be a non-empty string.')
 	}
@@ -169,7 +167,7 @@ const journeyLeg = (ref, query = {}) => {
 	return request('/journeys/legs/' + ref, query)
 }
 
-const locations = (query, params = {}) => {
+const locations = (request) => (query, params = {}) => {
 	if (!isProd && 'string' !== typeof query || !query) {
 		throw new Error('query must be a non-empty string.')
 	}
@@ -180,7 +178,7 @@ const locations = (query, params = {}) => {
 	return request('/locations', params)
 }
 
-const map = (type, query = {}) => {
+const map = (request) => (type, query = {}) => {
 	if (!isProd && 'string' !== typeof type || !type) {
 		throw new Error('type must be a non-empty string.')
 	}
@@ -189,7 +187,7 @@ const map = (type, query = {}) => {
 	return request('/maps/' + type, query, new PassThrough())
 }
 
-const radar = (north, west, south, east, query = {}) => {
+const radar = (request) => (north, west, south, east, query = {}) => {
 	if ('number' !== typeof north) throw new Error('north must be a number')
 	if ('number' !== typeof west) throw new Error('west must be a number')
 	if ('number' !== typeof south) throw new Error('south must be a number')
