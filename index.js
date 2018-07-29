@@ -93,7 +93,7 @@ const line = (request) =>  (id, query = {}) => {
 	return request('/lines/' + id, query)
 }
 
-const location = (request) =>  (loc, key, query) => {
+const location = (loc, key, query) => {
 	if ('string' === typeof loc) {
 		if (!isProd && !loc) throw new Error(key + ' must not be empty.')
 		query[key] = loc
@@ -128,7 +128,7 @@ const location = (request) =>  (loc, key, query) => {
 const journeys = (request) =>  (from, to, query = {}) => {
 	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 	query = Object.assign({}, query)
-	Object.assign(query, location(request)(from, 'from', query), location(request)(to, 'to', query))
+	Object.assign(query, location(from, 'from', query), location(to, 'to', query))
 	if ('when' in query) {
 		query.when = Math.round(query.when / 1000)
 		if (!isProd && Number.isNaN(query.when)) {
