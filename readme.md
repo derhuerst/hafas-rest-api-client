@@ -31,7 +31,7 @@ vbb.journeys('900000003201', '900000024101', {results: 1})
 
 ```js
 const vbb = require('vbb-client')({
-    endpoint: "http://my.local.api",
+    endpoint: "https://my.local.api",
 })
 ```
 
