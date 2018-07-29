@@ -8,8 +8,8 @@ let request;
 const isProd = process.env.NODE_ENV === 'production'
 const isObj = o => 'object' === typeof o && !Array.isArray(o)
 
-const configure = (config) => {
 	request = require('./lib/request')(config);
+const createClient = (config) => {
 	return {
 		stations,
 		nearby,
@@ -200,4 +200,4 @@ const radar = (north, west, south, east, query = {}) => {
 	return request('/radar', query)
 }
 
-module.exports = configure
+module.exports = createClient
