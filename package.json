@@ -29,7 +29,7 @@
 	"devDependencies": {
 		"is-promise": "^2.1",
 		"is-stream": "^1.1",
-		"luxon": "^0.4.0",
+		"luxon": "^0.5.8",
 		"tap-min": "^1.2.1",
 		"tape": "^4.5.1"
 	},
