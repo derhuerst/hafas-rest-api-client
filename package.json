@@ -1,6 +1,6 @@
 {
-	"name": "vbb-client",
-	"description": "An API client for Berlin & Brandenburg public transport.",
+	"name": "hafas-rest-api-client",
+	"description": "An API client for hafas-rest-api endpoints.",
 	"version": "4.0.0",
 	"main": "index.js",
 	"files": [
@@ -8,18 +8,16 @@
 		"lib"
 	],
 	"keywords": [
-		"vbb",
-		"bvg",
-		"public",
-		"transport",
-		"berlin"
+		"public transport",
+		"transit",
+		"hafas"
 	],
 	"author": "Jannis R <mail@jannisr.de>",
-	"homepage": "https://github.com/derhuerst/vbb-client",
-	"repository": "derhuerst/vbb-client",
+	"homepage": "https://github.com/derhuerst/hafas-rest-api-client",
+	"repository": "derhuerst/hafas-rest-api-client",
 	"license": "ISC",
 	"engines": {
-		"node": ">=6"
+		"node": ">=12"
 	},
 	"dependencies": {
 		"fetch-ponyfill": "^4.0.0",
