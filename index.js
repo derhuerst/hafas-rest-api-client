@@ -1,7 +1,7 @@
 'use strict'
 
 const stringifyQuery = require('qs/lib/stringify')
-const ky = require('ky-universal')
+const ky = require('ky-universal').default || require('ky-universal')
 const {parse: parseContentType} = require('content-type')
 const debug = require('debug')('hafas-rest-api-client')
 
