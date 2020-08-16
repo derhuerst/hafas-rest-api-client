@@ -1,13 +1,8 @@
 'use strict'
 
-const test = require('tape')
-const isPromise = require('is-promise')
-const isStream = require('is-stream')
 const {DateTime} = require('luxon')
-
-const client = require('.')()
-
-const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
+const test = require('tape')
+const createClient = require('.')
 
 // Monday of next week, 10 am
 const when = DateTime.fromMillis(Date.now(), {
@@ -16,245 +11,119 @@ const when = DateTime.fromMillis(Date.now(), {
 })
 .startOf('week')
 .plus({weeks: 1, hours: 10})
-.toJSDate()
+.toISO()
 
-test('stations()', (t) => {
-	t.plan(3 + 3)
-
-	const p1 = client.stations({
-		query: 'hallesc', completion: true,
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p1))
-	p1
-	.then((stations) => {
-		t.ok(Array.isArray(stations))
-		t.ok(stations.find(s => s.id === '900000012103'))
-	})
-	.catch(t.ifError)
-
-	const p2 = client.stations({
-		query: 'hallesches tor',
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p2))
-	p2
-	.then((stations) => {
-		t.ok(Array.isArray(stations))
-		t.ok(stations.find(s => s.id === '900000012103'))
-	})
-	.catch(t.ifError)
+const client = createClient('https://v5.vbb.transport.rest', {
+	userAgent: 'hafas-rest-api-client test',
 })
 
-test('nearby()', (t) => {
-	t.plan(3)
-
-	const p = client.nearby({
-		latitude: 52.5137344,
-		longitude: 13.4744798,
-		results: 4,
-		distance: 1000,
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p))
-	p
-	.then((stations) => {
-		t.ok(Array.isArray(stations))
-		t.ok(stations.length > 0)
-	})
-	.catch(t.ifError)
+test('locations()', async (t) => {
+	const locs = await client.locations('Alexanderplatz')
+	t.ok(Array.isArray(locs))
+	t.ok(locs.length > 0)
 })
 
-test('allStations()', (t) => {
-	t.plan(3)
-
-	const p1 = client.allStations({
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p1))
-	p1
-	.then((stations) => {
-		t.ok(isObj(stations))
-		t.ok(Object.keys(stations).length > 0)
-	})
-	.catch(t.ifError)
-})
-
-test('station()', (t) => {
-	t.plan(2 + 3)
-
-	t.throws(() => client.station(''))
-	t.throws(() => client.station(123))
-
-	const p = client.station('900000012103', {
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p))
-	p
-	.then((s) => {
-		t.ok(s)
-		t.equal(s.id, '900000012103')
-	})
-	.catch(t.ifError)
-})
-
-test('departures() without nextStation', (t) => {
-	t.plan(2 + 3)
-
-	t.throws(() => client.departures(''))
-	t.throws(() => client.departures(123))
-
-	const p = client.departures('900000012103', {
-		when, duration: 5,
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p))
-	p
-	.then((deps) => {
-		t.ok(Array.isArray(deps))
-		t.ok(deps.length >= 1)
-	})
-	.catch(t.ifError)
-})
-
-test('lines()', (t) => {
-	const s = client.lines({
-		variants: true, name: 'M13',
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isStream(s))
-
-	s.on('error', t.ifError)
-	.on('data', (l) => {
-		t.ok(l)
-	})
-	.once('end', () => t.end())
-})
-
-test('line()', (t) => {
-	t.plan(2 + 2)
-
-	t.throws(() => client.line(''))
-	t.throws(() => client.line(123))
-
-	const p = client.line('17442_900', {
-		identifier: 'vbb-client-test'
-	})
-	t.ok(isPromise(p))
-	p
-	.then((l) => t.ok(l))
-	.catch((err) => {
-		t.fail(err.message)
-	})
-})
-
-test('journeys() with station IDs', (t) => {
-	t.plan(4 + 2)
-
-	const validId = '123456789'
-	t.throws(() => client.journeys('', validId))
-	t.throws(() => client.journeys(123456789, validId))
-	t.throws(() => client.journeys(validId, ''))
-	t.throws(() => client.journeys(validId, 123456789))
-
-	const p = client.journeys('900000012103', '900000013102', {
-		when, results: 1,
-		identifier: 'vbb-client-test'
-	})
-	p
-	.then((r) => {
-		t.ok(Array.isArray(r))
-		t.equal(r.length, 1)
-	})
-	.catch(t.ifError)
-})
-
-test('journeys() with an address', (t) => {
-	t.plan(3)
-
-	const p = client.journeys('900000042101', {
+test('nearby()', async (t) => {
+	const stops = await client.nearby({
 		type: 'location',
-		address: 'Torfstraße 17',
-		latitude: 52.5416823, longitude: 13.3491223
-	}, {
-		when, results: 1,
-		identifier: 'vbb-client-test'
+		latitude: 52.5137,
+		longitude: 13.4745,
 	})
-	t.ok(isPromise(p))
-	p
-	.then((r) => {
-		t.ok(Array.isArray(r))
-		t.equal(r.length, 1)
-	})
-	.catch(t.ifError)
+	t.ok(Array.isArray(stops))
+	t.ok(stops.length > 0)
 })
 
-test('journeys() with a POI', (t) => {
-	t.plan(3)
-
-	const p = client.journeys('900000042101', {
+test('reachableFrom()', async (t) => {
+	const stops = await client.reachableFrom({
 		type: 'location',
-		id: '900000980720',
-		name: 'Berlin, Atze Musiktheater für Kinder',
-		latitude: 52.543333, longitude: 13.351686
-	}, {
+		address: '13353 Berlin-Wedding, Torfstr. 17',
+		latitude: 52.5418,
+		longitude: 13.35,
+	})
+	t.ok(Array.isArray(stops))
+	t.ok(stops.length > 0)
+})
+
+test('stop()', async (t) => {
+	const s = await client.stop('900000012103')
+	t.ok(s)
+	t.equal(s.id, '900000012103')
+})
+
+test('departures()', async (t) => {
+	const deps = await client.departures('900000012103', {
+		when,
+	})
+	t.ok(Array.isArray(deps))
+	t.ok(deps.length >= 1)
+})
+test('arrivals()', async (t) => {
+	const deps = await client.arrivals('900000012103', {
+		when,
+	})
+	t.ok(Array.isArray(deps))
+	t.ok(deps.length >= 1)
+})
+
+test('journeys() with station IDs', async (t) => {
+	const r = await client.journeys('900000012103', '900000013102', {
 		when, results: 1,
-		identifier: 'vbb-client-test'
 	})
-	t.ok(isPromise(p))
-	p
-	.then((r) => {
-		t.ok(Array.isArray(r))
-		t.equal(r.length, 1)
-	})
-	.catch(t.ifError)
+	t.ok(r)
+	t.ok(Array.isArray(r.journeys))
+	t.ok(r.journeys.length > 0)
 })
 
-test('locations()', (t) => {
-	t.plan(3 + 3)
+test('journeys() with an address', async (t) => {
+	const locs = await client.locations('torfstr 17', {results: 1})
+	const torfstr17 = {
+		type: 'location',
+		latitude: locs[0].latitude,
+		longitude: locs[0].longitude,
+		address: locs[0].address,
+	}
 
-	t.throws(() => client.locations())
-	t.throws(() => client.locations({}))
-	t.throws(() => client.locations(123))
-
-	const p = client.locations('Alexanderplatz', {
-		results: 10,
-		identifier: 'vbb-client-test'
+	const r = await client.journeys('900000042101', torfstr17, {
+		when, results: 1,
 	})
-	t.ok(isPromise(p))
-	p
-	.then((locations) => {
-		t.ok(Array.isArray(locations))
-		t.equal(locations.length, 10)
-	})
-	.catch(t.ifError)
+	t.ok(r)
+	t.ok(Array.isArray(r.journeys))
+	t.ok(r.journeys.length > 0)
 })
 
-test('map()', (t) => {
-	t.plan(5)
-
-	t.throws(() => client.map())
-	t.throws(() => client.map(123))
-	t.throws(() => client.map({}))
-
-	const s = client.map('bvg-night', {
-		identifier: 'vbb-client-test'
+test('refreshJourney()', async (t) => {
+	const r = await client.journeys('900000012103', '900000013102', {
+		when, results: 1,
 	})
-	t.ok(isStream(s))
-	s.on('error', t.ifError)
-	.on('data', () => {})
-	.on('end', () => t.pass('end event occured'))
+	const ref = r.journeys[0].refreshToken
+	t.ok(ref)
+
+	const j = await client.refreshJourney(ref, {
+		when,
+	})
+	t.ok(j)
 })
 
-test('radar()', (t) => {
-	t.plan(3)
-
-	const p = client.radar(52.52411, 13.41002, 52.51942, 13.41709)
-	t.ok(isPromise(p))
-	p
-	.then((movements) => {
-		t.ok(Array.isArray(movements))
-		t.ok(movements.length > 0)
+test('trip()', async (t) => {
+	const r = await client.journeys('900000012103', '900000013102', {
+		when, results: 1,
 	})
-	.catch(t.ifError)
+	const leg = r.journeys[0].legs.find(l => !!l.tripId)
+	t.ok(leg)
+
+	const j = await client.trip(leg.tripId, leg.line.name, {
+		when,
+	})
+	t.ok(j)
+})
+
+test('radar()', async (t) => {
+	const movements = await client.radar({
+		north: 52.52411,
+		west: 13.41002,
+		south: 52.51942,
+		east: 13.41709,
+	})
+	t.ok(Array.isArray(movements))
+	t.ok(movements.length > 0)
 })

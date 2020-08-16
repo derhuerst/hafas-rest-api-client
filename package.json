@@ -26,11 +26,9 @@
 		"qs": "^6.9.4"
 	},
 	"devDependencies": {
-		"is-promise": "^2.1",
-		"is-stream": "^1.1",
-		"luxon": "^0.5.8",
-		"tap-min": "^1.2.1",
-		"tape": "^4.5.1"
+		"luxon": "^1.24.1",
+		"tap-min": "^2.0.0",
+		"tape": "^5.0.1"
 	},
 	"scripts": {
 		"test": "node test.js | tap-min",
