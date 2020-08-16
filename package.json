@@ -1,7 +1,7 @@
 {
 	"name": "hafas-rest-api-client",
 	"description": "An API client for hafas-rest-api endpoints.",
-	"version": "4.0.0",
+	"version": "1.0.0",
 	"main": "index.js",
 	"files": [
 		"index.js"
