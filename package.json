@@ -4,8 +4,7 @@
 	"version": "4.0.0",
 	"main": "index.js",
 	"files": [
-		"index.js",
-		"lib"
+		"index.js"
 	],
 	"keywords": [
 		"public transport",
@@ -20,9 +19,11 @@
 		"node": ">=12"
 	},
 	"dependencies": {
-		"fetch-ponyfill": "^4.0.0",
-		"ndjson": "^1.4.3",
-		"pinkie-promise": "^2.0.1"
+		"content-type": "^1.0.4",
+		"debug": "^4.1.1",
+		"ky": "^0.23.0",
+		"ky-universal": "^0.8.1",
+		"qs": "^6.9.4"
 	},
 	"devDependencies": {
 		"is-promise": "^2.1",

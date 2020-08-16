@@ -22,7 +22,10 @@ npm install hafas-rest-api-client
 ```js
 const createClient = require('hafas-rest-api-client')
 
-const vbbClient = createClient('https://v5.vbb.transport.rest')
+const vbbClient = createClient('https://v5.vbb.transport.rest', {
+	// Please pass in a User-Agent header to let the providers of the API endpoint understand how you're using their API.
+	userAgent: 'my awesome project',
+})
 
 await vbbClient.journeys('900000003201', '900000024101', {results: 1})
 ```

@@ -1,201 +1,132 @@
 'use strict'
 
-const ndjson = require('ndjson').parse
-const {PassThrough} = require('stream')
+const stringifyQuery = require('qs/lib/stringify')
+const ky = require('ky-universal')
+const {parse: parseContentType} = require('content-type')
+const debug = require('debug')('hafas-rest-api-client')
 
-const isProd = process.env.NODE_ENV === 'production'
-const isObj = o => 'object' === typeof o && !Array.isArray(o)
+const createClient = (endpoint, opt = {}) => {
+	new URL(endpoint); // throws if endpoint URL is invalid
 
-const createClient = (config) => {
-	const request = require('./lib/request')(config);
-	return {
-		stations: stations(request),
-		nearby: nearby(request),
-		allStations: allStations(request),
-		station: station(request),
-		departures: departures(request),
-		lines: lines(request),
-		line: line(request),
-		journeys: journeys(request),
-		locations: locations(request),
-		map: map(request),
-		radar: radar(request)
-	}
-}
-
-const stations = (request) => (query = {}) => {
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/stations', query, false)
-}
-
-const nearby = (request) => (query = {}) => {
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/stations/nearby', query)
-}
-
-const station = (request) => (id, query = {}) => {
-	if (!isProd && 'string' !== typeof id || !id) {
-		throw new Error('id must be a non-empty string.')
-	}
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/stations/' + id, query)
-}
-
-const allStations = (request) => (query = {}) => {
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/stations/all', query)
-}
-
-const departures = (request) => (id, query = {}) => {
-	if (!isProd && 'string' !== typeof id || !id) {
-		throw new Error('id must be a non-empty string.')
+	const {
+		userAgent,
+	} = {
+		userAgent: 'hafas-rest-api-client',
 	}
 
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-	if ('when' in query) {
-		query.when = Math.round(query.when / 1000)
-		if (!isProd && Number.isNaN(query.when)) {
-			throw new Error('query.when must be a number of a Date.')
+	const request = async (path, query = {}, opt = {}) => {
+		const url = new URL(path, endpoint)
+
+		const cfg = {
+			mode: 'cors',
+			redirect: 'follow',
+			searchParams: stringifyQuery(Object.fromEntries([
+				...url.searchParams.entries(),
+				...Object.entries(query),
+			]), {allowDots: true}),
+			...opt,
+			headers: {
+				'Accept': 'application/json',
+				'User-Agent': userAgent,
+				...(opt.headers || {}),
+			},
 		}
-	}
-	if (
-		!isProd && ('nextStation' in query) &&
-		('string' !== typeof query.nextStation || !query.nextStation)
-	) {
-		throw new Error('query.nextStation must be a non-empty string.')
-	}
 
-	return request(`/stations/${id}/departures`, query)
-	.then((deps) => {
-		for (let dep of deps) {
-			if (dep.when) dep.when = new Date(dep.when)
-		}
-		return deps
-	})
-}
-
-const lines = (request) =>  (query = {}) => {
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/lines', query, ndjson())
-}
-
-const line = (request) =>  (id, query = {}) => {
-	if (!isProd && 'string' !== typeof id || !id) {
-		throw new Error('id must be a non-empty string.')
-	}
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	return request('/lines/' + id, query)
-}
-
-const location = (loc, key, query) => {
-	if ('string' === typeof loc) {
-		if (!isProd && !loc) throw new Error(key + ' must not be empty.')
-		query[key] = loc
-		return query
-	}
-	if (isObj(loc)) {
-		const isStation = loc.type === 'station'
-		const isPoi = loc.type === 'location' && ('id' in loc)
-		const isAddress = loc.type === 'location' && ('address' in loc)
-		if (
-			!isProd && (isStation || isPoi) &&
-			('string' !== typeof loc.id || !loc.id)
-		) throw new Error(key + '.id must be a non-empty string.')
-
-		if (isStation) {
-			query[key] = loc.id
-			return query
-		}
-		if (isPoi || isAddress) {
-			query[key + '.longitude'] = loc.longitude
-			query[key + '.latitude'] = loc.latitude
-			if (isPoi) {
-				query[key + '.id'] = loc.id
-				query[key + '.name'] = loc.name
-			} else query[key + '.address'] = loc.address
-			return query
-		}
-	}
-	throw new Error('valid station, address or poi required.')
-}
-
-const journeys = (request) =>  (from, to, query = {}) => {
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-	query = Object.assign({}, query)
-	Object.assign(query, location(from, 'from', query), location(to, 'to', query))
-	if ('when' in query) {
-		query.when = Math.round(query.when / 1000)
-		if (!isProd && Number.isNaN(query.when)) {
-			throw new Error('query.when must be a number of a Date.')
-		}
-	}
-
-	return request('/journeys', query)
-	.then((journeys) => {
-		for (let j of journeys) {
-			if (j.departure) j.departure = new Date(j.departure)
-			if (j.arrival) j.arrival = new Date(j.arrival)
-
-			for (let leg of j.legs) {
-				if (leg.departure) leg.departure = new Date(leg.departure)
-				if (leg.arrival) leg.arrival = new Date(leg.arrival)
-
-				if (Array.isArray(leg.passed)) {
-					for (let s of leg.passed) {
-						if (s.arrival) s.arrival = new Date(s.arrival)
-						if (s.departure) s.departure = new Date(s.departure)
-					}
+		let res
+		try {
+			res = await ky.get(url.href, cfg)
+			debug(res.status, path, query, opt)
+		} catch (err) {
+			// parse JSON body, attach to error object
+			try {
+				const headers = err.response && err.response.headers
+				const cType = headers && headers.get('content-type')
+				if (cType && parseContentType(cType).type === 'application/json') {
+					err.body = await err.response.json()
+					if (err.body.msg) err.message += ' – ' + err.body.msg
 				}
-			}
+			} catch (_) {}
+			throw err
 		}
-		return journeys
-	})
-}
 
-const journeyLeg = (request) => (ref, query = {}) => {
-	if (!isProd && 'string' !== typeof ref || !ref) {
-		throw new Error('ref must be a non-empty string.')
+		return await res.json()
 	}
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-	return request('/journeys/legs/' + ref, query)
-}
-
-const locations = (request) => (query, params = {}) => {
-	if (!isProd && 'string' !== typeof query || !query) {
-		throw new Error('query must be a non-empty string.')
+	const locations = async (query, opt = {}) => {
+		return await request('/locations', {
+			query,
+			...opt,
+		})
 	}
-	if (!isProd && !isObj(params)) throw new Error('params must be an object.')
 
-	params = Object.assign({}, params)
-	params.query = query
-	return request('/locations', params)
-}
-
-const map = (request) => (type, query = {}) => {
-	if (!isProd && 'string' !== typeof type || !type) {
-		throw new Error('type must be a non-empty string.')
+	const nearby = async (loc, opt = {}) => {
+		return await request('/stops/nearby', {
+			...loc,
+			...opt,
+		})
 	}
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
 
-	return request('/maps/' + type, query, new PassThrough())
+	const reachableFrom = async (loc, opt = {}) => {
+		return await request('/stops/reachable-from', {
+			...loc,
+			...opt,
+		})
+	}
+
+	const stop = async (id, opt = {}) => {
+		if (!id) throw new TypeError('invalid id')
+		return await request('/stops/' + encodeURIComponent(id), opt)
+	}
+
+	const _stationBoard = (type) => async (stop, opt = {}) => {
+		if (!stop) throw new TypeError('invalid stop')
+		if (stop.id) stop = stop.id
+		else if ('string' !== typeof stop) throw new TypeError('invalid stop')
+		return await request(`/stops/${encodeURIComponent(stop)}/departures`, opt)
+	}
+	const departures = _stationBoard('departures')
+	const arrivals = _stationBoard('arrivals')
+
+	const journeys = async (from, to, opt = {}) => {
+		return await request('/journeys', {
+			from, to,
+			...opt,
+		})
+	}
+
+	const refreshJourney = async (ref, opt = {}) => {
+		if (!ref) throw new TypeError('invalid ref')
+		return await request('/journeys/' + encodeURIComponent(ref), opt)
+	}
+
+	const trip = async (id, lineName, opt = {}) => {
+		if (!id) throw new TypeError('invalid id')
+		return await request('/trips/' + encodeURIComponent(id), {
+			lineName,
+			...opt,
+		})
+	}
+
+	const radar = async (bbox, opt = {}) => {
+		return await request('/radar', {
+			...bbox,
+			...opt,
+		})
+	}
+
+	return {
+		locations,
+		nearby,
+		reachableFrom,
+		stop,
+		departures, arrivals,
+		journeys,
+		refreshJourney,
+		trip,
+		radar,
+	}
 }
 
-const radar = (request) => (north, west, south, east, query = {}) => {
-	if ('number' !== typeof north) throw new Error('north must be a number')
-	if ('number' !== typeof west) throw new Error('west must be a number')
-	if ('number' !== typeof south) throw new Error('south must be a number')
-	if ('number' !== typeof east) throw new Error('east must be a number')
-	if (!isProd && !isObj(query)) throw new Error('query must be an object.')
-
-	query = Object.assign({}, query, {north, west, south, east})
-	return request('/radar', query)
-}
-
+createClient.RESPONSE = RESPONSE
+createClient.HEADERS = HEADERS
 module.exports = createClient
