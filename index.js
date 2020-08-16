@@ -5,6 +5,11 @@ const ky = require('ky-universal')
 const {parse: parseContentType} = require('content-type')
 const debug = require('debug')('hafas-rest-api-client')
 
+const RESPONSE = Symbol('Response')
+const HEADERS = Symbol('Response.headers')
+const SERVER_TIMING = Symbol('Server-Timing header')
+const CACHE = Symbol('X-Cache header')
+
 const createClient = (endpoint, opt = {}) => {
 	new URL(endpoint); // throws if endpoint URL is invalid
 
@@ -49,7 +54,16 @@ const createClient = (endpoint, opt = {}) => {
 			throw err
 		}
 
-		return await res.json()
+		const body = await res.json()
+		Object.defineProperty(body, RESPONSE, {value: res})
+		Object.defineProperty(body, HEADERS, {value: res.headers})
+		Object.defineProperty(body, SERVER_TIMING, {
+			value: res.headers.get('Server-Timing') || null,
+		})
+		Object.defineProperty(body, CACHE, {
+			value: res.headers.get('X-Cache') || null,
+		})
+		return body
 	}
 
 	const locations = async (query, opt = {}) => {
@@ -129,4 +143,6 @@ const createClient = (endpoint, opt = {}) => {
 
 createClient.RESPONSE = RESPONSE
 createClient.HEADERS = HEADERS
+createClient.SERVER_TIMING = SERVER_TIMING
+createClient.CACHE = CACHE
 module.exports = createClient
