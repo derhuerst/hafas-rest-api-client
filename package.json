@@ -21,7 +21,7 @@
 	"dependencies": {
 		"content-type": "^1.0.4",
 		"debug": "^4.1.1",
-		"ky": "^0.25.1",
+		"ky": "^0.28.1",
 		"ky-universal": "^0.8.1",
 		"qs": "^6.9.4"
 	},
