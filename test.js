@@ -1,8 +1,8 @@
 'use strict'
 
-const {DateTime} = require('luxon')
-const test = require('tape')
-const createClient = require('.')
+import {DateTime} from 'luxon'
+import test from 'tape'
+import createClient from './index.js'
 
 // Monday of next week, 10 am
 const when = DateTime.fromMillis(Date.now(), {

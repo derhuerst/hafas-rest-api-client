@@ -2,6 +2,7 @@
 	"name": "hafas-rest-api-client",
 	"description": "An API client for hafas-rest-api endpoints.",
 	"version": "1.0.2",
+	"type": "module",
 	"main": "index.js",
 	"files": [
 		"index.js"
@@ -16,7 +17,7 @@
 	"repository": "derhuerst/hafas-rest-api-client",
 	"license": "ISC",
 	"engines": {
-		"node": ">=12"
+		"node": ">=14"
 	},
 	"dependencies": {
 		"content-type": "^1.0.4",

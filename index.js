@@ -1,9 +1,11 @@
 'use strict'
 
-const stringifyQuery = require('qs/lib/stringify')
-const ky = require('ky-universal').default || require('ky-universal')
-const {parse: parseContentType} = require('content-type')
-const debug = require('debug')('hafas-rest-api-client')
+import stringifyQuery from 'qs/lib/stringify.js'
+import ky from 'ky-universal'
+import {parse as parseContentType} from 'content-type'
+import createDebug from 'debug'
+
+const debug = createDebug('hafas-rest-api-client')
 
 const RESPONSE = Symbol('Response')
 const HEADERS = Symbol('Response.headers')
@@ -141,8 +143,10 @@ const createClient = (endpoint, opt = {}) => {
 	}
 }
 
-createClient.RESPONSE = RESPONSE
-createClient.HEADERS = HEADERS
-createClient.SERVER_TIMING = SERVER_TIMING
-createClient.CACHE = CACHE
-module.exports = createClient
+export default createClient
+export {
+	RESPONSE,
+	HEADERS,
+	SERVER_TIMING,
+	CACHE,
+}
