@@ -3,7 +3,6 @@
 **A client for [`hafas-rest-api`](https://github.com/public-transport/hafas-rest-api) endpoints**, e.g. for [the `*.transport.rest` APIs](https://transport.rest/).
 
 [![npm version](https://img.shields.io/npm/v/hafas-rest-api-client.svg)](https://www.npmjs.com/package/hafas-rest-api-client)
-[![build status](https://api.travis-ci.org/derhuerst/hafas-rest-api-client.svg?branch=master)](https://travis-ci.org/derhuerst/hafas-rest-api-client)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/hafas-rest-api-client.svg)
 ![minimum Node.js version](https://img.shields.io/node/v/hafas-rest-api-client.svg)
 [![support me via GitHub Sponsors](https://img.shields.io/badge/support%20me-donate-fa7664.svg)](https://github.com/sponsors/derhuerst)
