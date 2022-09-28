@@ -27,13 +27,15 @@
 		"qs": "^6.9.4"
 	},
 	"devDependencies": {
+		"eslint": "^8.24.0",
 		"luxon": "^3.0.4",
 		"tap-min": "^2.0.0",
 		"tape": "^5.0.1"
 	},
 	"scripts": {
+		"lint": "eslint .",
 		"test": "node test.js | tap-min",
-		"prepublishOnly": "npm test"
+		"prepublishOnly": "npm run lint && npm test"
 	},
 	"contributors": [
 		"deiga <timo.sand@iki.fi>"

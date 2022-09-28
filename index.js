@@ -52,6 +52,7 @@ const createClient = (endpoint, opt = {}) => {
 					err.body = await err.response.json()
 					if (err.body.msg) err.message += ' – ' + err.body.msg
 				}
+			// eslint-disable-next-line no-empty
 			} catch (_) {}
 			throw err
 		}
