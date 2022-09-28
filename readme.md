@@ -29,13 +29,17 @@ const vbbClient = createClient('https://v5.vbb.transport.rest', {
 const res = await vbbClient.journeys('900000003201', '900000024101', {results: 1})
 ```
 
-`hafas-rest-api-client` is a client [`hafas-rest-api@3`](https://www.npmjs.com/package/hafas-rest-api/v/3.4.0) APIs. Check their individual API docs for all supported parameters.
+`hafas-rest-api-client` is a client for [`hafas-rest-api@3`](https://www.npmjs.com/package/hafas-rest-api/v/3.8.0) APIs. Check their individual API docs for all supported parameters.
 
 The response objects have special [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) fields for meta information:
 
 ```js
-const {HEADERS, SERVER_TIMING, CACHE} = require('hafas-rest-api-client')
+const {
+	RESPONSE, HEADERS,
+	SERVER_TIMING, CACHE,
+} = require('hafas-rest-api-client')
 
+console.log('response', res[RESPONSE]) // Fetch API Response object
 console.log('response headers', res[HEADERS]) // Fetch API Headers object
 console.log('server timing', res[SERVER_TIMING]) // value of the Server-Timing response header
 console.log('server cache', res[CACHE]) // value of the X-Cache response header
