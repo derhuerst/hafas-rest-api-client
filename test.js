@@ -33,6 +33,13 @@ test('nearby()', async (t) => {
 	t.ok(stops.length > 0)
 })
 
+test('stations()', async (t) => {
+	const locs = await client.stations('Alexande', {
+		completion: true,
+	})
+	t.ok(Object.keys(locs).length > 0)
+})
+
 test('reachableFrom()', async (t) => {
 	const stops = await client.reachableFrom({
 		type: 'location',

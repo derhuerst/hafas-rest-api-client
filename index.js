@@ -82,6 +82,13 @@ const createClient = (endpoint, opt = {}) => {
 		})
 	}
 
+	const stations = async (query, opt = {}) => {
+		return await request('/stations', {
+			...opt,
+			query,
+		})
+	}
+
 	const reachableFrom = async (loc, opt = {}) => {
 		return await request('/stops/reachable-from', {
 			...loc,
@@ -133,6 +140,7 @@ const createClient = (endpoint, opt = {}) => {
 	return {
 		locations,
 		nearby,
+		stations,
 		reachableFrom,
 		stop,
 		departures, arrivals,
