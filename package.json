@@ -1,7 +1,7 @@
 {
 	"name": "hafas-rest-api-client",
 	"description": "An API client for hafas-rest-api endpoints.",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"type": "module",
 	"main": "index.js",
 	"files": [
@@ -22,12 +22,12 @@
 	"dependencies": {
 		"content-type": "^1.0.4",
 		"debug": "^4.1.1",
-		"ky": "^0.29.0",
+		"ky": "^0.31.3",
 		"ky-universal": "^0.10.0",
 		"qs": "^6.9.4"
 	},
 	"devDependencies": {
-		"luxon": "^2.0.2",
+		"luxon": "^3.0.4",
 		"tap-min": "^2.0.0",
 		"tape": "^5.0.1"
 	},
