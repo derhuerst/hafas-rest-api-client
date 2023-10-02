@@ -20,17 +20,17 @@
 		"node": ">=14"
 	},
 	"dependencies": {
-		"content-type": "^1.0.4",
-		"debug": "^4.1.1",
-		"ky": "^0.31.3",
-		"ky-universal": "^0.10.0",
-		"qs": "^6.9.4"
+		"content-type": "^1.0.5",
+		"debug": "^4.3.4",
+		"ky": "^1.0.1",
+		"ky-universal": "^0.12.0",
+		"qs": "^6.11.2"
 	},
 	"devDependencies": {
-		"eslint": "^8.24.0",
-		"luxon": "^3.0.4",
-		"tap-min": "^2.0.0",
-		"tape": "^5.0.1"
+		"eslint": "^8.50.0",
+		"luxon": "^3.4.3",
+		"tap-min": "^3.0.0",
+		"tape": "^5.7.0"
 	},
 	"scripts": {
 		"lint": "eslint .",
