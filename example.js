@@ -3,11 +3,11 @@
 import createClient, {SERVER_TIMING, CACHE} from './index.js'
 import {inspect} from 'util'
 
-const vbbClient = createClient('https://v5.vbb.transport.rest', {
+const vbbClient = createClient('https://v6.vbb.transport.rest', {
 	userAgent: 'hafas-rest-api-client example',
 })
 
-vbbClient.journeys('900000003201', '900000024101', {results: 1})
+vbbClient.journeys('900100705', '900096197', {results: 1})
 .then((res) => {
 	console.log(inspect(res.journeys, {depth: null, colors: true}))
 

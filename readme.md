@@ -21,15 +21,15 @@ npm install hafas-rest-api-client
 ```js
 import createClient from 'hafas-rest-api-client'
 
-const vbbClient = createClient('https://v5.vbb.transport.rest', {
+const vbbClient = createClient('https://v6.vbb.transport.rest', {
 	// Please pass in a User-Agent header to let the providers of the API endpoint understand how you're using their API.
 	userAgent: 'my awesome project',
 })
 
-const res = await vbbClient.journeys('900000003201', '900000024101', {results: 1})
+const res = await vbbClient.journeys('900100705', '900096197', {results: 1})
 ```
 
-`hafas-rest-api-client` is a client for [`hafas-rest-api@3`](https://www.npmjs.com/package/hafas-rest-api/v/3.8.0) APIs. Check their individual API docs for all supported parameters.
+`hafas-rest-api-client` is a client for [`hafas-rest-api@6`](https://www.npmjs.com/package/hafas-rest-api/v/6.0.0-alpha.1) APIs. Check their individual API docs for all supported parameters.
 
 The response objects have special [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) fields for meta information:
 

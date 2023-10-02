@@ -13,7 +13,7 @@ const when = DateTime.fromMillis(Date.now(), {
 .plus({weeks: 1, hours: 10})
 .toISO()
 
-const client = createClient('https://v5.vbb.transport.rest', {
+const client = createClient('https://v6.vbb.transport.rest', {
 	userAgent: 'hafas-rest-api-client test',
 })
 

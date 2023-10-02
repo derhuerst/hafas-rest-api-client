@@ -19,6 +19,7 @@ const createClient = (endpoint, opt = {}) => {
 		userAgent,
 	} = {
 		userAgent: 'hafas-rest-api-client',
+		...opt
 	}
 
 	const request = async (path, query = {}, opt = {}) => {
@@ -77,7 +78,7 @@ const createClient = (endpoint, opt = {}) => {
 	}
 
 	const nearby = async (loc, opt = {}) => {
-		return await request('/stops/nearby', {
+		return await request('/locations/nearby', {
 			...loc,
 			...opt,
 		})
@@ -88,6 +89,20 @@ const createClient = (endpoint, opt = {}) => {
 			...opt,
 			query,
 		})
+	}
+
+	const station = async (id, opt = {}) => {
+		if (!id) throw new TypeError('invalid id')
+		return await request('/stations/'+ encodeURIComponent(id), opt)
+	}
+
+	const lines = async (opt = {}) => {
+		return await request('/lines', opt)
+	}
+
+	const line = async (id, opt = {}) => {
+		if (!id) throw new TypeError('invalid id')
+		return await request('/lines/'+ encodeURIComponent(id), opt)
 	}
 
 	const reachableFrom = async (loc, opt = {}) => {
@@ -106,7 +121,7 @@ const createClient = (endpoint, opt = {}) => {
 		if (!stop) throw new TypeError('invalid stop')
 		if (stop.id) stop = stop.id
 		else if ('string' !== typeof stop) throw new TypeError('invalid stop')
-		return await request(`/stops/${encodeURIComponent(stop)}/departures`, opt)
+		return await request(`/stops/${encodeURIComponent(stop)}/${type}`, opt)
 	}
 	const departures = _stationBoard('departures')
 	const arrivals = _stationBoard('arrivals')
@@ -131,6 +146,13 @@ const createClient = (endpoint, opt = {}) => {
 		})
 	}
 
+	const trips = async (query, opt = {}) => {
+		return await request('/trips', {
+			query,
+			...opt,
+		})
+	}
+
 	const radar = async (bbox, opt = {}) => {
 		return await request('/radar', {
 			...bbox,
@@ -142,12 +164,16 @@ const createClient = (endpoint, opt = {}) => {
 		locations,
 		nearby,
 		stations,
+		station,
+		lines,
+		line,
 		reachableFrom,
 		stop,
 		departures, arrivals,
 		journeys,
 		refreshJourney,
 		trip,
+		trips,
 		radar,
 	}
 }
